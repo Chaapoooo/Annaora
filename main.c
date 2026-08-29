@@ -1,12 +1,39 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <string.h>
 
 #define BUFFER_SIZE 30
 
-int main(int argc, char *argv[]) {
+int main() {
+
+    // TITLE
 
     printf("Annaora file manager!\n");
-    printf("%s\n%s\n", argv[0], argv[1]);
+
+    // ------------------------------------------------------------------
+
+    // dirent.h
+
+    DIR *dir = opendir(".");
+    if(dir == NULL){
+        perror("Erreur lors de l'ouverture du dossier!\n");
+        exit(1);
+    }
+
+    struct dirent *entry;
+    while((entry = readdir(dir)) != NULL){
+        printf("%s\n", entry->d_name);
+    }
+
+    closedir(dir);
+
+    // ------------------------------------------------------------------
+
+
+    // BUFFER & getcwd
 
     char buffer[BUFFER_SIZE];
     if(getcwd(buffer, BUFFER_SIZE) == NULL){
@@ -15,6 +42,9 @@ int main(int argc, char *argv[]) {
     }
 
     printf("Current working directory: %s\n", buffer);
-    
+
+    // ------------------------------------------------------------------
+
+
     return 0;
 }
