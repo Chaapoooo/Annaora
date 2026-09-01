@@ -30,3 +30,9 @@
 ### Added
 
 * We can read what's inside of a folder, damn! (lines 20–31)
+
+## [0.1.1] - 2026-09-02 / 00:30
+
+### Added
+
+* We can now see if the listed objects are files or folders!
