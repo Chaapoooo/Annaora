@@ -4,8 +4,14 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <string.h>
+#include <time.h>
+#include <stdbool.h>
+#include <sys/select.h>
+#include <termios.h>
 
 #define BUFFER_SIZE 30
+
+int getMin(int a, int b);
 
 typedef struct{
     char *name;
@@ -53,11 +59,9 @@ int main() {
         } else if (files[number].type == 8){
             printf("FILE   - %s\n", files[number].name);
         }
+
         number++;
     }
-
-    free(files);
-    closedir(dir);
 
     // ------------------------------------------------------------------
 
@@ -74,6 +78,53 @@ int main() {
 
     // ------------------------------------------------------------------
 
+    // while loop
 
+    struct termios oldt;
+    struct termios newt;
+
+    tcgetattr(STDIN_FILENO, &oldt);
+
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+    bool isRunning = true;
+    int currentSelect = 0;
+    int selected = getMin(0, number);
+
+    while(isRunning) {
+        char c = getchar();
+        usleep(1000000/60);
+        
+        if (c == '\033') {
+            char c2 = getchar();
+            char c3 = getchar();
+
+            if (c2 == '[') {
+                if (c3 == 'A')
+                    currentSelect == number - 1 ? currentSelect = 0 : currentSelect++;
+                if (c3 == 'B')
+                    currentSelect == 0 ? currentSelect = number - 1 : currentSelect--;
+
+                printf("%d, %s\n", currentSelect, files[currentSelect].name);
+            }
+        }
+    }
+
+    
+    // -----------------------------------------------------------------
+    
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    free(files);
+    closedir(dir);
     return 0;
+}
+
+int getMin(int a, int b){
+    if(a>b){
+        return b;
+    }
+    return a;
 }
