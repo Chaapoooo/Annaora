@@ -36,3 +36,9 @@
 ### Added
 
 * We can now see if the listed objects are files or folders!
+
+## [0.1.2] - 2026-09-02 / 01:05
+
+### Added
+
+* You can cycle through every detected element in the given folder.
