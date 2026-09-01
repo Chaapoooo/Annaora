@@ -23,11 +23,27 @@ int main() {
         exit(1);
     }
 
-    struct dirent *entry;
-    while((entry = readdir(dir)) != NULL){
-        printf("%s\n", entry->d_name);
+    int capacity = 10;
+    int number = 0;
+    char **files = malloc(capacity * sizeof(char *));
+    if (files == NULL) {
+        perror("malloc");
+        return 1;
     }
 
+    struct dirent *entry;
+    while((entry = readdir(dir)) != NULL){
+        if(number >= capacity){
+            capacity *= 2;
+            files = realloc(files, capacity * sizeof(char *));
+        }
+        files[number] = malloc(strlen(entry->d_name) +1);
+        strcpy(files[number], entry->d_name);
+        printf("%s\n", files[number]);
+        number++;
+    }
+
+    free(files);
     closedir(dir);
 
     // ------------------------------------------------------------------
