@@ -42,3 +42,9 @@
 ### Added
 
 * You can cycle through every detected element in the given folder.
+
+## [0.1.3] - 2026-09-02 / 17:15
+
+### Added
+
+* Same as v0.1.2 but it looks nicer

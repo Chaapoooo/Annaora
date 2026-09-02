@@ -73,7 +73,7 @@ Due to school starting again the developpment might be impacted and slowed so do
 
 ### Current version
 
-**v0.1.1 - User is able to see in the termianl the list of folders and files inside a given folder (path) and can see if the listed objects are files or folders!**
+**v0.1.2 - User is able to see in the termianl the list of folders and files inside a given folder (path) and can see if the listed objects are files or folders!**
 
 ---
 

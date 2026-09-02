@@ -11,17 +11,19 @@
 
 #define BUFFER_SIZE 30
 
-int getMin(int a, int b);
-
 typedef struct{
     char *name;
     unsigned char type;
 } File;
 
+void listFiles(File *files, int number);
+void getCurrentWorkingDirectory();
+
 int main() {
 
     // TITLE
 
+    system("clear");
     printf("Annaora file manager!\n");
 
     // ------------------------------------------------------------------
@@ -55,9 +57,9 @@ int main() {
         files[number].type = entry->d_type;
 
         if(files[number].type == 4){
-            printf("FOLDER - %s\n", files[number].name);
+            printf("%25s - FOLD\n", files[number].name);
         } else if (files[number].type == 8){
-            printf("FILE   - %s\n", files[number].name);
+            printf("%25s - FILE\n", files[number].name);
         }
 
         number++;
@@ -65,16 +67,9 @@ int main() {
 
     // ------------------------------------------------------------------
 
-
     // BUFFER & getcwd
 
-    char buffer[BUFFER_SIZE];
-    if(getcwd(buffer, BUFFER_SIZE) == NULL){
-        printf("Cannot get current working directory path!\n");
-        return 1;
-    }
-
-    printf("Current working directory: %s\n", buffer);
+    //getCurrentWorkingDirectory(); -- Don't need it rn
 
     // ------------------------------------------------------------------
 
@@ -92,39 +87,67 @@ int main() {
 
     bool isRunning = true;
     int currentSelect = 0;
-    int selected = getMin(0, number);
+    bool isFolder = files[0].type == 4;
+
+    isFolder ? printf("\n%03d %30s FOLD\n", currentSelect, files[currentSelect].name) : printf("\n%03d %30s FILE\n", currentSelect, files[currentSelect].name);
 
     while(isRunning) {
         char c = getchar();
         usleep(1000000/60);
-        
+
         if (c == '\033') {
             char c2 = getchar();
             char c3 = getchar();
 
             if (c2 == '[') {
-                if (c3 == 'A')
+                if(c3 == 'A')
                     currentSelect == number - 1 ? currentSelect = 0 : currentSelect++;
-                if (c3 == 'B')
+                if(c3 == 'B')
                     currentSelect == 0 ? currentSelect = number - 1 : currentSelect--;
+                
+                isFolder = files[currentSelect].type == 4;
 
-                printf("%d, %s\n", currentSelect, files[currentSelect].name);
+                if(isFolder){
+                    system("clear");
+                    printf("Annaora file manager!\n");
+                    listFiles(files, number);
+                    printf("\n\r%03d %30s FOLD\n", currentSelect, files[currentSelect].name);
+                } else {
+                    system("clear");
+                    printf("Annaora file manager!\n");
+                    listFiles(files, number);
+                    printf("\n\r%03d %30s FILE\n", currentSelect, files[currentSelect].name);
+                }
             }
         }
     }
 
-    
     // -----------------------------------------------------------------
-    
+
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     free(files);
     closedir(dir);
     return 0;
 }
 
-int getMin(int a, int b){
-    if(a>b){
-        return b;
+void listFiles(File *files, int number){
+    for (int i = 0; i < number; i++) {
+
+        if (files[i].type == 4) {
+            printf("%25s - FOLD\n", files[i].name);
+        } 
+        else if (files[i].type == 8) {
+            printf("%25s - FILE\n", files[i].name);
+        }
     }
-    return a;
+}
+
+void getCurrentWorkingDirectory(){
+    char buffer[BUFFER_SIZE];
+    if(getcwd(buffer, BUFFER_SIZE) == NULL){
+        printf("Cannot get current working directory path!\n");
+        exit(1);
+    }
+
+    printf("Current working directory: %s\n", buffer);
 }
