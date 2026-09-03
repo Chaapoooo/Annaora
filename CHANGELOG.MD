@@ -48,3 +48,9 @@
 ### Added
 
 * Same as v0.1.2 but it looks nicer
+
+## [0.2.0] - 2026-09-03 / 15:45
+
+### Added
+
+* Proud to announce v0.2.0 !! Now its partially functionnal, you can go through any folder you'd like !
