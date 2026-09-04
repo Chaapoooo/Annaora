@@ -81,7 +81,7 @@
 
 ## [0.3.1.1] - 2026-09-04 / 16:55
 
-### Added
+### Fix
 
 * Fixed the max size being 4096 bytes.
 * Fixed the selected folder was not being displayed when leaving the informations menu
@@ -105,12 +105,18 @@
 
 ## [0.3.2.1] - 2026-09-04 / 21-15
 
-### Added
+### Fix
 
 * Fixed the changelog (again)
 
 ## [0.3.2.2] - 2026-09-04 / 22:20
 
-### Added
+### Fix
 
 * Readme fix... (am I that stupid ?)
+
+## [0.3.2.3] - 2026-09-04 / 23:35
+
+### Fix
+
+* Now the size of a folder is the real size of whats inside of it !

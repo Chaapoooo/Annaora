@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <inttypes.h>
 #include <pwd.h>
+#include <sys/vfs.h>
 
 #define BUFFER_SIZE 30
 
@@ -29,6 +30,8 @@ void refreshListFile(File **files, int *number, int *capacity);
 void printPermissions(mode_t mode);
 void printDate(time_t timestamp);
 void printOwner(uid_t uid);
+off_t getFolderSize(const char *path, dev_t filesystem);
+dev_t getFilesystemDevice(const char *path);
 
 DIR *enterFile(char basePath[], char followingPath[], char *dirPath){
     if (dirPath == NULL) {
@@ -261,7 +264,15 @@ int main() {
             printf("Informations for FOLDER %s\n", files[currentSelect].name);
             printf("\n");
 
-            printf("Size: %" PRIdMAX " bytes.\n",(intmax_t)files[currentSelect].size);
+            printf("Size: ");
+            if (S_ISDIR(files[currentSelect].type)) {
+                off_t folderSize = getFolderSize(files[currentSelect].name, getFilesystemDevice(files[currentSelect].name));
+                printf("%" PRIdMAX " bytes.", (intmax_t)folderSize);
+            } else {
+                printf("%" PRIdMAX " bytes.", (intmax_t)files[currentSelect].size);
+            }
+
+            printf("\n");
 
             printf("Permissions: ");
             printPermissions(files[currentSelect].type);
@@ -428,4 +439,64 @@ void printOwner(uid_t uid){
     struct passwd *user = getpwuid(uid);
 
     user != NULL ? printf("%s", user->pw_name) : printf("%d", uid);
+}
+
+off_t getFolderSize(const char *path, dev_t filesystem){
+    DIR *dir = opendir(path);
+
+    if (dir == NULL) {
+        printf("Impossible d'ouvrir : %s\n", path);
+        perror("opendir");
+        return 0;
+    }
+
+    off_t totalSize = 0;
+    struct dirent *entry;
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        char *fullPath = malloc(strlen(path) + 1 + strlen(entry->d_name) + 1);
+        strcpy(fullPath, path);
+        strcat(fullPath, "/");
+        strcat(fullPath, entry->d_name);
+
+        struct stat info;
+
+        if (lstat(fullPath, &info) == -1) {
+            free(fullPath);
+            continue;
+        }
+
+        if (info.st_dev != filesystem) {
+            free(fullPath);
+            continue;
+        }
+
+        if (S_ISREG(info.st_mode)) {
+            totalSize += info.st_size;
+        }
+        else if (S_ISDIR(info.st_mode)) {
+            totalSize += getFolderSize(fullPath, filesystem);
+        }
+
+        free(fullPath);
+    }
+
+    closedir(dir);
+    return totalSize;
+}
+
+dev_t getFilesystemDevice(const char *path){
+
+    struct stat info;
+
+    if (stat(path, &info) == -1) {
+        perror("stat");
+        return 0;
+    }
+
+    return info.st_dev;
 }
