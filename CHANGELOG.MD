@@ -54,3 +54,9 @@
 ### Added
 
 * Proud to announce v0.2.0 !! Now its partially functionnal, you can go through any folder you'd like !
+
+## [0.2.1] - 2026-09-03 / 15:15
+
+### Added
+
+* Works on any linux computer, fixed the path problem, now it always opens /home/$USER on launch.

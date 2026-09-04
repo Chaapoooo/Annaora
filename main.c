@@ -51,7 +51,8 @@ int main() {
 
     // dirent.h
 
-    char basePath[100] = "/home";
+    char basePath[100];
+    strcpy(basePath, getenv("HOME"));
     char followingPath[] = "";
     char *dirPath = malloc(strlen(basePath) + strlen(followingPath) + 1);
 
