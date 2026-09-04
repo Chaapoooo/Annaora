@@ -10,6 +10,7 @@
 #include <termios.h>
 #include <sys/stat.h>
 #include <inttypes.h>
+#include <pwd.h>
 
 #define BUFFER_SIZE 30
 
@@ -17,11 +18,17 @@ typedef struct{
     char *name;
     unsigned int type;
     off_t size;
+    time_t modified;
+    uid_t owner;
+    bool isSymlink;
 } File;
 
 void listFiles(File *files, int number, int currentSelect);
 void getCurrentWorkingDirectory();
 void refreshListFile(File **files, int *number, int *capacity);
+void printPermissions(mode_t mode);
+void printDate(time_t timestamp);
+void printOwner(uid_t uid);
 
 DIR *enterFile(char basePath[], char followingPath[], char *dirPath){
     if (dirPath == NULL) {
@@ -90,7 +97,18 @@ int main() {
             continue;
         }
 
+        struct stat linkInfo;
+
+        if (lstat(entry->d_name, &linkInfo) == -1) {
+            continue;
+        }
+
         files[number].type = info.st_mode;
+        files[number].size = info.st_size;
+        files[number].modified = info.st_mtime;
+        files[number].owner = info.st_uid;
+        files[number].isSymlink = S_ISLNK(linkInfo.st_mode);
+
         if(number == 0){
             printf("\x1b[1;30;47m");
         }
@@ -105,8 +123,6 @@ int main() {
         if(number == 0){
             printf("\x1b[0m");
         }
-
-        files[number].size = info.st_size;
 
         number++;
     }
@@ -198,9 +214,71 @@ int main() {
         if((key == 'O' || key == 'o') && S_ISREG(files[currentSelect].type)){
             system("clear");
 
-            printf("Informations for %s\n", files[currentSelect].name);
+            printf("Informations for FILE %s\n", files[currentSelect].name);
+            printf("\n");
+
             printf("Size: %" PRIdMAX " bytes.\n",(intmax_t)files[currentSelect].size);
-            printf("Press 'Q' to exit !\n");
+
+            printf("Permissions: ");
+            printPermissions(files[currentSelect].type);
+            printf("\n");
+
+            printf("Modified: ");
+            printDate(files[currentSelect].modified);
+            printf("\n");
+
+            printf("Owner: ");
+            printOwner(files[currentSelect].owner);
+            printf("\n");
+
+            printf("Symlink: %s\n", files[currentSelect].isSymlink ? "Y" : "N");
+
+            printf("\n");
+            printf("Press 'Q' to exit !");
+
+            while(1){
+                key = getchar();
+            
+                if(key == 'Q' || key == 'q'){
+                    break;
+                }
+            }
+        
+            system("clear");
+            printf("Annaora file manager!\n");
+            listFiles(files, number, currentSelect);
+            if(S_ISDIR(files[currentSelect].type)){
+                    printf("\n\r%03d %23s FOLD\n", currentSelect, files[currentSelect].name);
+            } 
+            else if(S_ISREG(files[currentSelect].type)){
+                printf("\n\r%03d %30s FILE\n", currentSelect, files[currentSelect].name);
+            }
+        }
+
+        if((key == 'O' || key == 'o') && S_ISDIR(files[currentSelect].type)){
+            system("clear");
+
+            printf("Informations for FOLDER %s\n", files[currentSelect].name);
+            printf("\n");
+
+            printf("Size: %" PRIdMAX " bytes.\n",(intmax_t)files[currentSelect].size);
+
+            printf("Permissions: ");
+            printPermissions(files[currentSelect].type);
+            printf("\n");
+
+            printf("Modified: ");
+            printDate(files[currentSelect].modified);
+            printf("\n");
+
+            printf("Owner: ");
+            printOwner(files[currentSelect].owner);
+            printf("\n");
+
+            printf("Symlink: %s\n", files[currentSelect].isSymlink ? "Y" : "N");
+
+            printf("\n");
+            printf("Press 'Q' to exit !");
 
             while(1){
                 key = getchar();
@@ -292,7 +370,6 @@ void refreshListFile(File **files, int *number, int *capacity) {
         }
 
         struct stat info;
-
         if (stat(entry->d_name, &info) == -1) {
             continue;
         }
@@ -311,4 +388,44 @@ void refreshListFile(File **files, int *number, int *capacity) {
         (*number)++;
     }
     closedir(dir);
+}
+
+void printPermissions(mode_t mode)
+{
+    mode & S_IRUSR ? printf("r") : printf("-");
+
+    mode & S_IWUSR ? printf("w") : printf("-");
+
+    mode & S_IXUSR ? printf("x") : printf("-");
+
+    printf("/");
+
+    mode & S_IRGRP ? printf("r") : printf("-");
+
+    mode & S_IWGRP ? printf("w") : printf("-");
+
+    mode & S_IXGRP ? printf("x") : printf("-");
+
+    printf("/");
+
+    mode & S_IROTH ? printf("r") : printf("-");
+
+    mode & S_IWOTH ? printf("w") : printf("-");
+
+    mode & S_IXOTH ? printf("x") : printf("-");
+}
+
+void printDate(time_t timestamp){
+    char buffer[100];
+    struct tm *timeinfo = localtime(&timestamp);
+
+    strftime(buffer, sizeof(buffer), "%d/%m/%Y -- %H:%M:%S", timeinfo);
+
+    printf("%s", buffer);
+}
+
+void printOwner(uid_t uid){
+    struct passwd *user = getpwuid(uid);
+
+    user != NULL ? printf("%s", user->pw_name) : printf("%d", uid);
 }

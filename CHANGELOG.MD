@@ -85,3 +85,20 @@
 
 * Fixed the max size being 4096 bytes.
 * Fixed the selected folder was not being displayed when leaving the informations menu
+
+## [0.3.2] - 2026-09-04 / 21:05
+
+### Added
+
+* **In informations, for FILES, added :**
+- Permissions
+- Date
+- Owner
+- if the file a symlink ?
+
+* **In informations, for FOLDER, added :**
+- Size (i know it is 4096 bytes for now, it will be changed)
+- Permissions
+- Date
+- Owner
+- if the folder a symlink ?
