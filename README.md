@@ -73,7 +73,7 @@ Due to school starting again the developpment might be impacted and slowed so do
 
 ### Current version
 
-**v0.2.1 - User is able to see in the termianl the list of folders and files inside a given folder (path) and can see if the listed objects are files or folders!**
+**v0.2.2 - User can go through the folders like a real terminal based file explorer and colors are added for a better UX.**
 
 ---
 
@@ -109,6 +109,12 @@ Project documentation will be progressively added as Annaora develops.
 
 - [Changelog](CHANGELOG.md)
 - Configuration language documentation — *coming in Engine 2.0*
+
+---
+
+## HOW TO USE ?
+
+Its pretty easy as of now, arrow keys down and up to change items in the list and enter to enter a folder. Only folders, you can't see inside of a file as of now.
 
 ---
 

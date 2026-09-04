@@ -60,3 +60,9 @@
 ### Added
 
 * Works on any linux computer, fixed the path problem, now it always opens /home/$USER on launch.
+
+## [0.2.2] - 2026-09-03 / 15:55
+
+### Added
+
+* White bg and black font color for the selected item.
