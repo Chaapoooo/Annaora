@@ -120,3 +120,9 @@
 ### Fix
 
 * Now the size of a folder is the real size of whats inside of it !
+
+## [0.3.2.4] - 2026-09-04 / 23:38
+
+### Fix
+
+* Uhm, needed to fix the readme..
