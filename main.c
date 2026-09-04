@@ -15,6 +15,7 @@
 typedef struct{
     char *name;
     unsigned int type;
+    int size;
 } File;
 
 void listFiles(File *files, int number, int currentSelect);
@@ -99,15 +100,13 @@ int main() {
         else if (S_ISREG(files[number].type)) {
             printf("%25s - FILE\n", files[number].name);
         }
-        else if (S_ISLNK(files[number].type)) {
-            printf("%25s - LINK\n", files[number].name);
-        }
 
         if(number == 0){
             printf("\x1b[0m");
         }
-        
-        
+
+        files[number].size = info.st_size;
+
         number++;
     }
 
@@ -161,11 +160,6 @@ int main() {
                     printf("Annaora file manager!\n");
                     listFiles(files, number, currentSelect);
                     printf("\n\r%03d %23s FILE\n", currentSelect, files[currentSelect].name);
-                } else if(S_ISLNK(files[currentSelect].type)){
-                    system("clear");
-                    printf("Annaora file manager!\n");
-                    listFiles(files, number, currentSelect);
-                    printf("\n\r%03d %23s LINK\n", currentSelect, files[currentSelect].name);
                 }
             }
         }
@@ -197,9 +191,6 @@ int main() {
                 else if(S_ISREG(files[currentSelect].type)){
                     printf("\n\r%03d %30s FILE\n", currentSelect, files[currentSelect].name);
                 }
-                else if(S_ISLNK(files[currentSelect].type)) {
-                    printf("%25s - LINK\n", files[number].name);
-                }
             }
         }
 
@@ -207,6 +198,7 @@ int main() {
             system("clear");
 
             printf("Informations for %s\n", files[currentSelect].name);
+            printf("Size: %d bytes.\n", files[currentSelect].size);
             printf("Press 'Q' to exit !\n");
 
             while(1){
