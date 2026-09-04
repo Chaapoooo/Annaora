@@ -124,7 +124,9 @@ Its pretty easy as of now, arrow keys down and up to change items in the list an
 
 1 - But for now do `git clone https://github.com/Chaapoooo/Annaora.git'
 2 - Then do `cd Annaora`
-3 - Finally do `./main`
+3 - Finally do `./main`, the program will be launched
+
+( Do ctrl + C to exit )
 
 ---
 
