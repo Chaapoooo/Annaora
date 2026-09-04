@@ -122,9 +122,18 @@ Its pretty easy as of now, arrow keys down and up to change items in the list an
 
 > Build instructions will be added once the first functional version is available.
 
-1 - But for now do `git clone https://github.com/Chaapoooo/Annaora.git`
-2 - Then do `cd Annaora`
-3 - Finally do `./main`, the program will be launched
+1. But for now clone the repo and follow the steps :
+```bash
+git clone https://github.com/Chaapoooo/Annaora.git
+```
+2. Then enter the directory :
+```bash
+cd Annaora
+```
+3. Launch Annaora :
+```bash
+./main
+```
 
 ( Do ctrl + C to exit )
 
