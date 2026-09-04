@@ -122,6 +122,10 @@ Its pretty easy as of now, arrow keys down and up to change items in the list an
 
 > Build instructions will be added once the first functional version is available.
 
+1 - But for now do `git clone https://github.com/Chaapoooo/Annaora.git'
+2 - Then do `cd Annaora`
+3 - Finally do `./main`
+
 ---
 
 ## Contributing
