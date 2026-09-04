@@ -9,13 +9,14 @@
 #include <sys/select.h>
 #include <termios.h>
 #include <sys/stat.h>
+#include <inttypes.h>
 
 #define BUFFER_SIZE 30
 
 typedef struct{
     char *name;
     unsigned int type;
-    int size;
+    off_t size;
 } File;
 
 void listFiles(File *files, int number, int currentSelect);
@@ -198,7 +199,7 @@ int main() {
             system("clear");
 
             printf("Informations for %s\n", files[currentSelect].name);
-            printf("Size: %d bytes.\n", files[currentSelect].size);
+            printf("Size: %" PRIdMAX " bytes.\n",(intmax_t)files[currentSelect].size);
             printf("Press 'Q' to exit !\n");
 
             while(1){
@@ -212,6 +213,12 @@ int main() {
             system("clear");
             printf("Annaora file manager!\n");
             listFiles(files, number, currentSelect);
+            if(S_ISDIR(files[currentSelect].type)){
+                    printf("\n\r%03d %23s FOLD\n", currentSelect, files[currentSelect].name);
+            } 
+            else if(S_ISREG(files[currentSelect].type)){
+                printf("\n\r%03d %30s FILE\n", currentSelect, files[currentSelect].name);
+            }
         }
     }
 
@@ -300,6 +307,7 @@ void refreshListFile(File **files, int *number, int *capacity) {
 
         strcpy((*files)[*number].name, entry->d_name);
         (*files)[*number].type = info.st_mode;
+        (*files)[*number].size = info.st_size;
         (*number)++;
     }
     closedir(dir);

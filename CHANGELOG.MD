@@ -78,3 +78,10 @@
 ### Added
 
 * On the 'informations' menu, added the size of the opened file in bytes.
+
+## [0.3.1.1] - 2026-09-04 / 16:55
+
+### Added
+
+* Fixed the max size being 4096 bytes.
+* Fixed the selected folder was not being displayed when leaving the informations menu
