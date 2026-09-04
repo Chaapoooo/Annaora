@@ -395,9 +395,18 @@ void refreshListFile(File **files, int *number, int *capacity) {
             exit(1);
         }
 
+        struct stat linkInfo;
+
+        if (lstat(entry->d_name, &linkInfo) == -1) {
+            continue;
+        }
+
         strcpy((*files)[*number].name, entry->d_name);
         (*files)[*number].type = info.st_mode;
         (*files)[*number].size = info.st_size;
+        (*files)[*number].modified = info.st_mtime;
+        (*files)[*number].owner = info.st_uid;
+        (*files)[*number].isSymlink = S_ISLNK(linkInfo.st_mode);
         (*number)++;
     }
     closedir(dir);

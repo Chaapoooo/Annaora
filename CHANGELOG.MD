@@ -132,3 +132,9 @@
 ### Update
 
 * Now folder size is displayed in B, KiB, MiB, GiB or TiB depending on the size of the folder !
+
+## [0.3.2.6] - 2026-09-04 / 23:54
+
+## Fix
+
+* Function refreshListFile did not update modified, owner and symlink correctly, fixed !
