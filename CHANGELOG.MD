@@ -45,48 +45,48 @@
 
 ## [0.1.3] - 2026-09-02 / 17:15
 
-### Added
+### Added
 
 * Same as v0.1.2 but it looks nicer
 
-## [0.2.0] - 2026-09-03 / 15:45
+## [0.2.0] - 2026-09-03 / 15:45
 
-### Added
+### Added
 
 * Proud to announce v0.2.0 !! Now its partially functionnal, you can go through any folder you'd like !
 
 ## [0.2.1] - 2026-09-04 / 15:15
 
-### Added
+### Added
 
 * Works on any linux computer, fixed the path problem, now it always opens /home/$USER on launch.
 
-## [0.2.2] - 2026-09-04 / 15:55
+## [0.2.2] - 2026-09-04 / 15:55
 
-### Added
+### Added
 
 * White bg and black font color for the selected item.
 
 ## [0.3.0] - 2026-09-04 / 16:40
 
-### Added
+### Added
 
 * When pressing 'o' on a selected file (works only on files for now), will open a new 'informations menu' that is empty for now except for the name of the file
 
-## [0.3.1] - 2026-09-04 / 16:50
+## [0.3.1] - 2026-09-04 / 16:50
 
-### Added
+### Added
 
 * On the 'informations' menu, added the size of the opened file in bytes.
 
-## [0.3.1.1] - 2026-09-04 / 16:55
+## [0.3.1.1] - 2026-09-04 / 16:55
 
-### Added
+### Added
 
 * Fixed the max size being 4096 bytes.
 * Fixed the selected folder was not being displayed when leaving the informations menu
 
-## [0.3.2] - 2026-09-04 / 21:05
+## [0.3.2] - 2026-09-04 / 21:05
 
 ### Added
 
@@ -102,3 +102,9 @@
 - Date
 - Owner
 - if the folder a symlink ?
+
+## [0.3.2.1] - 2026-09-04 / 21-15
+
+### Added
+
+* Fixed the changelog (again)
