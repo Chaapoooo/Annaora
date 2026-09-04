@@ -108,3 +108,9 @@
 ### Added
 
 * Fixed the changelog (again)
+
+## [0.3.2.2] - 2026-09-04 / 22:20
+
+### Added
+
+* Readme fix... (am I that stupid ?)

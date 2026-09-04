@@ -107,7 +107,7 @@ Version `1.0.0` will focus on restructuring, cleaning up, documenting, testing, 
 
 Project documentation will be progressively added as Annaora develops.
 
-- [Changelog](CHANGELOG.md)
+- [Changelog](CHANGELOG.MD)
 - Configuration language documentation — *coming in Engine 2.0*
 
 ---
