@@ -84,8 +84,7 @@ int main() {
 
         struct stat info;
 
-        if (lstat(entry->d_name, &info) == -1) {
-            perror("stat");
+        if (stat(entry->d_name, &info) == -1) {
             continue;
         }
 
@@ -99,6 +98,9 @@ int main() {
         }
         else if (S_ISREG(files[number].type)) {
             printf("%25s - FILE\n", files[number].name);
+        }
+        else if (S_ISLNK(files[number].type)) {
+            printf("%25s - LINK\n", files[number].name);
         }
 
         if(number == 0){
@@ -148,19 +150,22 @@ int main() {
                     currentSelect == 0 ? currentSelect = number - 1 : currentSelect--;
                 if(c3 == 'B')
                     currentSelect == number - 1 ? currentSelect = 0 : currentSelect++;
-                
-                isFolder = S_ISDIR(files[currentSelect].type);
 
-                if(isFolder){
+                if(S_ISDIR(files[currentSelect].type)){
                     system("clear");
                     printf("Annaora file manager!\n");
                     listFiles(files, number, currentSelect);
                     printf("\n\r%03d %23s FOLD\n", currentSelect, files[currentSelect].name);
-                } else {
+                } else if(S_ISREG(files[currentSelect].type)){
                     system("clear");
                     printf("Annaora file manager!\n");
                     listFiles(files, number, currentSelect);
                     printf("\n\r%03d %23s FILE\n", currentSelect, files[currentSelect].name);
+                } else if(S_ISLNK(files[currentSelect].type)){
+                    system("clear");
+                    printf("Annaora file manager!\n");
+                    listFiles(files, number, currentSelect);
+                    printf("\n\r%03d %23s LINK\n", currentSelect, files[currentSelect].name);
                 }
             }
         }
@@ -186,13 +191,35 @@ int main() {
                 listFiles(files, number, currentSelect);
                 isFolder = S_ISDIR(files[currentSelect].type);
             
-                if(isFolder) {
+                if(S_ISDIR(files[currentSelect].type)){
                     printf("\n\r%03d %23s FOLD\n", currentSelect, files[currentSelect].name);
                 } 
-                else {
+                else if(S_ISREG(files[currentSelect].type)){
                     printf("\n\r%03d %30s FILE\n", currentSelect, files[currentSelect].name);
                 }
+                else if(S_ISLNK(files[currentSelect].type)) {
+                    printf("%25s - LINK\n", files[number].name);
+                }
             }
+        }
+
+        if((key == 'O' || key == 'o') && S_ISREG(files[currentSelect].type)){
+            system("clear");
+
+            printf("Informations for %s\n", files[currentSelect].name);
+            printf("Press 'Q' to exit !\n");
+
+            while(1){
+                key = getchar();
+            
+                if(key == 'Q' || key == 'q'){
+                    break;
+                }
+            }
+        
+            system("clear");
+            printf("Annaora file manager!\n");
+            listFiles(files, number, currentSelect);
         }
     }
 
@@ -267,7 +294,7 @@ void refreshListFile(File **files, int *number, int *capacity) {
 
         struct stat info;
 
-        if (lstat(entry->d_name, &info) == -1) {
+        if (stat(entry->d_name, &info) == -1) {
             continue;
         }
 
