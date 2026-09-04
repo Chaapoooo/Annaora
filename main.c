@@ -17,7 +17,7 @@ typedef struct{
     unsigned int type;
 } File;
 
-void listFiles(File *files, int number);
+void listFiles(File *files, int number, int currentSelect);
 void getCurrentWorkingDirectory();
 void refreshListFile(File **files, int *number, int *capacity);
 
@@ -90,6 +90,9 @@ int main() {
         }
 
         files[number].type = info.st_mode;
+        if(number == 0){
+            printf("\x1b[1;30;47m");
+        }
 
         if (S_ISDIR(files[number].type)) {
             printf("%25s - FOLD\n", files[number].name);
@@ -98,6 +101,11 @@ int main() {
             printf("%25s - FILE\n", files[number].name);
         }
 
+        if(number == 0){
+            printf("\x1b[0m");
+        }
+        
+        
         number++;
     }
 
@@ -146,12 +154,12 @@ int main() {
                 if(isFolder){
                     system("clear");
                     printf("Annaora file manager!\n");
-                    listFiles(files, number);
+                    listFiles(files, number, currentSelect);
                     printf("\n\r%03d %23s FOLD\n", currentSelect, files[currentSelect].name);
                 } else {
                     system("clear");
                     printf("Annaora file manager!\n");
-                    listFiles(files, number);
+                    listFiles(files, number, currentSelect);
                     printf("\n\r%03d %23s FILE\n", currentSelect, files[currentSelect].name);
                 }
             }
@@ -175,7 +183,7 @@ int main() {
                 currentSelect = 0;
                 system("clear");
                 printf("Annaora file manager!\n");
-                listFiles(files, number);
+                listFiles(files, number, currentSelect);
                 isFolder = S_ISDIR(files[currentSelect].type);
             
                 if(isFolder) {
@@ -198,14 +206,22 @@ int main() {
     return 0;
 }
 
-void listFiles(File *files, int number){
+void listFiles(File *files, int number, int currentSelect){
     for (int i = 0; i < number; i++) {
+
+        if(i == currentSelect){
+            printf("\x1b[1;30;47m");
+        }
 
         if (S_ISDIR(files[i].type)) {
             printf("%25s - FOLD\n", files[i].name);
         } 
         else if (S_ISREG(files[i].type)) {
             printf("%25s - FILE\n", files[i].name);
+        }
+
+        if(i == currentSelect){
+            printf("\x1b[0m");
         }
     }
 }
