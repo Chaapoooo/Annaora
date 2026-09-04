@@ -126,3 +126,9 @@
 ### Fix
 
 * Uhm, needed to fix the readme..
+
+## [0.3.2.5] - 2026-09-04 / 23:50
+
+### Update
+
+* Now folder size is displayed in B, KiB, MiB, GiB or TiB depending on the size of the folder !

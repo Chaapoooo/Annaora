@@ -12,6 +12,7 @@
 #include <inttypes.h>
 #include <pwd.h>
 #include <sys/vfs.h>
+#include <math.h>
 
 #define BUFFER_SIZE 30
 
@@ -32,6 +33,7 @@ void printDate(time_t timestamp);
 void printOwner(uid_t uid);
 off_t getFolderSize(const char *path, dev_t filesystem);
 dev_t getFilesystemDevice(const char *path);
+void convertSize(off_t size);
 
 DIR *enterFile(char basePath[], char followingPath[], char *dirPath){
     if (dirPath == NULL) {
@@ -267,9 +269,9 @@ int main() {
             printf("Size: ");
             if (S_ISDIR(files[currentSelect].type)) {
                 off_t folderSize = getFolderSize(files[currentSelect].name, getFilesystemDevice(files[currentSelect].name));
-                printf("%" PRIdMAX " bytes.", (intmax_t)folderSize);
+                convertSize(folderSize);
             } else {
-                printf("%" PRIdMAX " bytes.", (intmax_t)files[currentSelect].size);
+                convertSize(files[currentSelect].size);
             }
 
             printf("\n");
@@ -499,4 +501,24 @@ dev_t getFilesystemDevice(const char *path){
     }
 
     return info.st_dev;
+}
+
+void convertSize(off_t size){
+    double convertedSize = size;
+
+    if (size >= pow(1024, 4)) {
+        convertedSize /= pow(1024, 4);
+        printf("%.2f TiB", convertedSize);
+    } else if (size >= pow(1024, 3)) {
+        convertedSize /= pow(1024, 3);
+        printf("%.2f GiB", convertedSize);
+    } else if (size >= pow(1024, 2)) {
+        convertedSize /= pow(1024, 2);
+        printf("%.2f MiB", convertedSize);
+    } else if (size >= 1024) {
+        convertedSize /= 1024;
+        printf("%.2f KiB", convertedSize);
+    } else {
+        printf("%.0f B", convertedSize);
+    }
 }
