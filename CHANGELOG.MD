@@ -139,7 +139,7 @@
 
 * Function refreshListFile did not update modified, owner and symlink correctly, fixed !
 
-## [0.4.0.0] - 2026-09-04 / xx:xx
+## [0.4.0.0] - 2026-09-04 / 13:55
 
 ### Added
 
