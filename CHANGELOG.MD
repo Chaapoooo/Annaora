@@ -139,7 +139,7 @@
 
 * Function refreshListFile did not update modified, owner and symlink correctly, fixed !
 
-## [0.4.0.0] - 2026-09-04 / 13:55
+## [0.4.0.0] - 2026-09-05 / 13:55
 
 ### Added
 
@@ -158,3 +158,9 @@
 - Folder names have now a `/` at the end (looks nicer than nothing).
 - Selected files/folder now have a `--->` before them.
 - The main column is larger for larger names of files.
+
+## [0.4.1.0] - 2026-09-05 / 18:20
+
+### Added
+
+- Copy mode is now implemented and should work on any file or folder !

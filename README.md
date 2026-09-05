@@ -73,7 +73,7 @@ Due to school starting again the developpment might be impacted and slowed so do
 
 ### Current version
 
-**v0.3.3.0 - User can see informations of a folder or a file by pressing 'o'.**
+**v0.4.1.0 - User can see informations of a folder or a file by pressing 'o'.**
 
 ---
 
@@ -122,7 +122,7 @@ SINCE v0.3.0 :
 
 SINCE v0.4.0: **ALL OF THEM DOES NOT WORK FOR NOW, IMPLEMENTATION IS COMING..**
 - Return now allows navigation to the parent folder, so by pressing `RETURN` key you will go back in the parent folder.
-- `c` key to open the copy menu -> When **INSIDE** the chosen folder to copy the file/folder to, press `y` to confirm.
+- `c` key to open the copy menu -> When **INSIDE** the chosen folder to copy the file/folder to, press `y` to confirm. -- WORKS
 - `m` key to open the move menu -> When **INSIDE** the chosen folder to move the file/folder to, press `y` to confirm.
 - `d` key to delete the selected folder/file (no confirmation's asked).
 - `r` key to open the rename menu.
