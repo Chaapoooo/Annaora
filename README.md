@@ -73,7 +73,7 @@ Due to school starting again the developpment might be impacted and slowed so do
 
 ### Current version
 
-**v0.3.2.6 - User can see informations of a folder or a file by pressing 'o'.**
+**v0.3.3.0 - User can see informations of a folder or a file by pressing 'o'.**
 
 ---
 
@@ -119,6 +119,14 @@ Its pretty easy as of now, arrow keys down and up to change items in the list an
 SINCE v0.3.0 :
 - Press 'o' to open the informations menu of a FILE, only for files as of now.
 - Press 'q' to close the informations menu.
+
+SINCE v0.4.0: **ALL OF THEM DOES NOT WORK FOR NOW, IMPLEMENTATION IS COMING..**
+- Return now allows navigation to the parent folder, so by pressing `RETURN` key you will go back in the parent folder.
+- `c` key to open the copy menu -> When **INSIDE** the chosen folder to copy the file/folder to, press `y` to confirm.
+- `m` key to open the move menu -> When **INSIDE** the chosen folder to move the file/folder to, press `y` to confirm.
+- `d` key to delete the selected folder/file (no confirmation's asked).
+- `r` key to open the rename menu.
+- `t` key to open the mkdir / touch menu (will be created inside the active folder).
 
 ---
 

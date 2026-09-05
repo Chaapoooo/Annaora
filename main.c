@@ -116,17 +116,21 @@ int main() {
 
         if(number == 0){
             printf("\x1b[1;30;47m");
-        }
-
-        if (S_ISDIR(files[number].type)) {
-            printf("%25s - FOLD\n", files[number].name);
-        }
-        else if (S_ISREG(files[number].type)) {
-            printf("%25s - FILE\n", files[number].name);
-        }
-
-        if(number == 0){
+            if(S_ISDIR(files[number].type)) {
+                printf("   -->%39s/ - FOLD\n", files[number].name);
+            } 
+            else if(S_ISREG(files[number].type)) {
+                printf("   -->%40s - FILE \n", files[number].name);
+            }
             printf("\x1b[0m");
+
+        } else {
+            if(S_ISDIR(files[number].type)) {
+                printf("%45s/ - FOLD\n", files[number].name);
+            } 
+            else if(S_ISREG(files[number].type)) {
+                printf("%46s - FILE \n", files[number].name);
+            }
         }
 
         number++;
@@ -156,7 +160,7 @@ int main() {
     int currentSelect = 0;
     bool isFolder = S_ISDIR(files[0].type);
 
-    isFolder ? printf("\n%03d %23s FOLD\n", currentSelect, files[currentSelect].name) : printf("\n%03d %30s FILE\n", currentSelect, files[currentSelect].name);
+    isFolder ? printf("\n%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name) : printf("\n%03d %44s FILE \n", currentSelect, files[currentSelect].name);
 
     while(isRunning) {
         char key = getchar();
@@ -176,12 +180,12 @@ int main() {
                     system("clear");
                     printf("Annaora file manager!\n");
                     listFiles(files, number, currentSelect);
-                    printf("\n\r%03d %23s FOLD\n", currentSelect, files[currentSelect].name);
+                    printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
                 } else if(S_ISREG(files[currentSelect].type)){
                     system("clear");
                     printf("Annaora file manager!\n");
                     listFiles(files, number, currentSelect);
-                    printf("\n\r%03d %23s FILE\n", currentSelect, files[currentSelect].name);
+                    printf("\n\r%03d %44s FILE\n", currentSelect, files[currentSelect].name);
                 }
             }
         }
@@ -208,10 +212,10 @@ int main() {
                 isFolder = S_ISDIR(files[currentSelect].type);
             
                 if(S_ISDIR(files[currentSelect].type)){
-                    printf("\n\r%03d %23s FOLD\n", currentSelect, files[currentSelect].name);
+                    printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
                 } 
                 else if(S_ISREG(files[currentSelect].type)){
-                    printf("\n\r%03d %30s FILE\n", currentSelect, files[currentSelect].name);
+                    printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
                 }
             }
         }
@@ -253,10 +257,10 @@ int main() {
             printf("Annaora file manager!\n");
             listFiles(files, number, currentSelect);
             if(S_ISDIR(files[currentSelect].type)){
-                    printf("\n\r%03d %23s FOLD\n", currentSelect, files[currentSelect].name);
+                printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
             } 
             else if(S_ISREG(files[currentSelect].type)){
-                printf("\n\r%03d %30s FILE\n", currentSelect, files[currentSelect].name);
+                printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
             }
         }
 
@@ -305,10 +309,126 @@ int main() {
             printf("Annaora file manager!\n");
             listFiles(files, number, currentSelect);
             if(S_ISDIR(files[currentSelect].type)){
-                    printf("\n\r%03d %23s FOLD\n", currentSelect, files[currentSelect].name);
+                printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
             } 
             else if(S_ISREG(files[currentSelect].type)){
-                printf("\n\r%03d %30s FILE\n", currentSelect, files[currentSelect].name);
+                printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
+            }
+        }
+
+        if(key == 'c' || key == 'C'){
+            system("clear");
+
+            printf("Informations for FOLDER %s\n", files[currentSelect].name);
+            printf("\n");
+
+            printf("\n");
+            printf("Press 'Q' to exit !");
+
+            while(1){
+                key = getchar();
+            
+                if(key == 'Q' || key == 'q'){
+                    break;
+                }
+            }
+
+            system("clear");
+            printf("Annaora file manager!\n");
+            listFiles(files, number, currentSelect);
+            if(S_ISDIR(files[currentSelect].type)){
+                printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
+            } 
+            else if(S_ISREG(files[currentSelect].type)){
+                printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
+            }
+        }
+
+        if(key == 'm' || key == 'M'){
+            system("clear");
+
+            printf("MOVE MENU FOR %s\n", files[currentSelect].name);
+            printf("\n");
+
+            printf("\n");
+            printf("Press 'Q' to exit !");
+
+            while(1){
+                key = getchar();
+            
+                if(key == 'Q' || key == 'q'){
+                    break;
+                }
+            }
+
+            system("clear");
+            printf("Annaora file manager!\n");
+            listFiles(files, number, currentSelect);
+            if(S_ISDIR(files[currentSelect].type)){
+                printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
+            } 
+            else if(S_ISREG(files[currentSelect].type)){
+                printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
+            }
+        }
+
+        if(key == 'd' || key == 'D'){
+            // WILL JUST DEL WITHOUT CONF
+        }
+
+        if(key == 'r' || key == 'R'){
+            system("clear");
+
+            printf("RENAME MENU FOR %s\n", files[currentSelect].name);
+            printf("\n");
+
+            printf("\n");
+            printf("Press 'Q' to exit !");
+
+            while(1){
+                key = getchar();
+            
+                if(key == 'Q' || key == 'q'){
+                    break;
+                }
+            }
+
+            system("clear");
+            printf("Annaora file manager!\n");
+            listFiles(files, number, currentSelect);
+            if(S_ISDIR(files[currentSelect].type)){
+                printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
+            } 
+            else if(S_ISREG(files[currentSelect].type)){
+                printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
+            }
+        }
+
+        if(key == 't' || key == 'T'){
+            system("clear");
+
+            printf("MAKEDIR / MAKEFILE MENU%s\n", files[currentSelect].name);
+            printf("\n");
+
+            printf("\n");
+            printf("Press 'Q' to exit !");
+
+            while(1){
+                key = getchar();
+            
+                if(key == 'Q' || key == 'q'){
+                    break;
+                }
+            }
+
+            system("clear");
+            printf("Annaora file manager!\n");
+            listFiles(files, number, currentSelect);
+            if(S_ISDIR(files[currentSelect].type)){
+                printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
+            } 
+            else if(S_ISREG(files[currentSelect].type)){
+                printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
             }
         }
     }
@@ -328,17 +448,22 @@ void listFiles(File *files, int number, int currentSelect){
 
         if(i == currentSelect){
             printf("\x1b[1;30;47m");
-        }
+            
+            if(S_ISDIR(files[i].type)) {
+                printf("   -->%39s/ - FOLD\n", files[i].name);
+            } 
+            else if(S_ISREG(files[i].type)) {
+                printf("   -->%40s - FILE \n", files[i].name);
+            }
 
-        if (S_ISDIR(files[i].type)) {
-            printf("%25s - FOLD\n", files[i].name);
-        } 
-        else if (S_ISREG(files[i].type)) {
-            printf("%25s - FILE\n", files[i].name);
-        }
-
-        if(i == currentSelect){
             printf("\x1b[0m");
+        } else {
+            if(S_ISDIR(files[i].type)) {
+                printf("%45s/ - FOLD\n", files[i].name);
+            } 
+            else if(S_ISREG(files[i].type)) {
+                printf("%46s - FILE \n", files[i].name);
+            }
         }
     }
 }

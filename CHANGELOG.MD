@@ -135,6 +135,26 @@
 
 ## [0.3.2.6] - 2026-09-04 / 23:54
 
-## Fix
+### Fix
 
 * Function refreshListFile did not update modified, owner and symlink correctly, fixed !
+
+## [0.4.0.0] - 2026-09-04 / xx:xx
+
+### Added
+
+- `c` key -> opens the copy menu (empty for now).
+- `m` key -> opens the move menu (empty for now).
+- `d` key -> deletes the selected folder/file (not working for now).
+- `r` key -> opens the rename menu (empty for now).
+- `t` key -> opens the mkdir / touch menu (empty for now).
+
+### QOL
+
+- Return now allows navigation to the parent folder, so by pressing `RETURN` key you will go back in the parent folder.
+
+### Changed
+
+- Folder names have now a `/` at the end (looks nicer than nothing).
+- Selected files/folder now have a `--->` before them.
+- The main column is larger for larger names of files.
