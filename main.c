@@ -30,14 +30,18 @@ typedef struct{
 void listFiles(File *files, int number, int currentSelect);
 void getCurrentWorkingDirectory();
 void refreshListFile(File **files, int *number, int *capacity);
+
 void printPermissions(mode_t mode);
 void printDate(time_t timestamp);
 void printOwner(uid_t uid);
 off_t getFolderSize(const char *path, dev_t filesystem);
 dev_t getFilesystemDevice(const char *path);
 void convertSize(off_t size);
+
 void copyFile(const char *source, const char *destination);
 void copyFolder(const char *source, const char *destination);
+
+void moveFile(const char *source, const char *destination);
 
 DIR *enterFile(char basePath[], char followingPath[], char *dirPath){
     if (dirPath == NULL) {
@@ -122,7 +126,7 @@ int main() {
             printf("\x1b[1;30;47m");
             if(S_ISDIR(files[number].type)) {
                 printf("   -->%39s/ - FOLD\n", files[number].name);
-            } 
+            }
             else if(S_ISREG(files[number].type)) {
                 printf("   -->%40s - FILE \n", files[number].name);
             }
@@ -131,7 +135,7 @@ int main() {
         } else {
             if(S_ISDIR(files[number].type)) {
                 printf("%45s/ - FOLD\n", files[number].name);
-            } 
+            }
             else if(S_ISREG(files[number].type)) {
                 printf("%46s - FILE \n", files[number].name);
             }
@@ -163,8 +167,12 @@ int main() {
     bool isRunning = true;
     int currentSelect = 0;
     bool isFolder = S_ISDIR(files[0].type);
+
     bool copyMode = false;
     char *copySource = NULL;
+
+    bool moveMode = false;
+    char *moveSource = NULL;
 
     isFolder ? printf("\n%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name) : printf("\n%03d %44s FILE \n", currentSelect, files[currentSelect].name);
 
@@ -175,34 +183,34 @@ int main() {
         if(copyMode){
             if(key == 'q' || key == 'Q'){
                 copyMode = false;
-            
+
                 free(copySource);
                 copySource = NULL;
-            
+
                 system("clear");
                 printf("Annaora file manager!\n");
                 listFiles(files, number, currentSelect);
-            
+
                 continue;
             }
-        
+
             if(key == 'y' || key == 'Y'){
                 system("clear");
-            
+
                 printf("COPY DESTINATION CONFIRMED\n");
                 printf("Source: %s\n", copySource);
                 printf("Destination: %s\n", files[currentSelect].name);
-            
+
                 getchar();
                 copyMode = false;
-            
+
                 free(copySource);
                 copySource = NULL;
-            
+
                 system("clear");
                 printf("Annaora file manager!\n");
                 listFiles(files, number, currentSelect);
-            
+
                 continue;
             }
         }
@@ -230,6 +238,7 @@ int main() {
                 }
             }
         }
+
         if(key == '\n' && S_ISDIR(files[currentSelect].type)){
             printf("\rEntering folder %s\n", files[currentSelect].name);
 
@@ -238,22 +247,50 @@ int main() {
             } else{
                 closedir(dir);
                 dir = opendir(".");
-            
+
                 if (dir == NULL) {
                     perror("opendir");
                     exit(1);
                 }
-            
+
                 refreshListFile(&files, &number, &capacity);
                 currentSelect = 0;
                 system("clear");
                 printf("Annaora file manager!\n");
                 listFiles(files, number, currentSelect);
                 isFolder = S_ISDIR(files[currentSelect].type);
-            
+
                 if(S_ISDIR(files[currentSelect].type)){
                     printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
-                } 
+                }
+                else if(S_ISREG(files[currentSelect].type)){
+                    printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
+                }
+            }
+        }
+
+        if(key == 127 || key == 8){
+            if (chdir("..") == -1) {
+                perror("chdir");
+            } else{
+                closedir(dir);
+                dir = opendir(".");
+
+                if (dir == NULL) {
+                    perror("opendir");
+                    exit(1);
+                }
+
+                refreshListFile(&files, &number, &capacity);
+                currentSelect = 0;
+                system("clear");
+                printf("Annaora file manager!\n");
+                listFiles(files, number, currentSelect);
+                isFolder = S_ISDIR(files[currentSelect].type);
+
+                if(S_ISDIR(files[currentSelect].type)){
+                    printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
+                }
                 else if(S_ISREG(files[currentSelect].type)){
                     printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
                 }
@@ -287,24 +324,24 @@ int main() {
 
             while(1){
                 key = getchar();
-            
+
                 if(key == 'Q' || key == 'q'){
                     break;
                 }
             }
-        
+
             system("clear");
             printf("Annaora file manager!\n");
             listFiles(files, number, currentSelect);
             if(S_ISDIR(files[currentSelect].type)){
                 printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
-            } 
+            }
             else if(S_ISREG(files[currentSelect].type)){
                 printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
             }
         }
 
-        if((key == 'O' || key == 'o') && S_ISDIR(files[currentSelect].type)){
+        if((key == 'o' || key == 'O') && S_ISDIR(files[currentSelect].type)){
             system("clear");
 
             printf("Informations for FOLDER %s\n", files[currentSelect].name);
@@ -339,18 +376,18 @@ int main() {
 
             while(1){
                 key = getchar();
-            
+
                 if(key == 'Q' || key == 'q'){
                     break;
                 }
             }
-        
+
             system("clear");
             printf("Annaora file manager!\n");
             listFiles(files, number, currentSelect);
             if(S_ISDIR(files[currentSelect].type)){
                 printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
-            } 
+            }
             else if(S_ISREG(files[currentSelect].type)){
                 printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
             }
@@ -363,19 +400,14 @@ int main() {
                 perror("getcwd");
                 exit(1);
             }
-        
-            copySource = malloc(
-                strlen(currentPath) +
-                1 +
-                strlen(files[currentSelect].name) +
-                1
-            );
-        
+
+            copySource = malloc(strlen(currentPath) + 1 + strlen(files[currentSelect].name) + 1);
+
             if(copySource == NULL){
                 perror("malloc");
                 exit(1);
             }
-        
+
             sprintf(copySource, "%s/%s", currentPath, files[currentSelect].name);
             copyMode = true;
 
@@ -383,14 +415,14 @@ int main() {
                 system("clear");
                 printf("COPY MODE\n");
                 printf("Copy: %s\n\n", copySource);
-                printf("[Y-CONFIRM / Q-CANCEL] ");
+                printf("[Y-CONFIRM / Q-CANCEL] \n");
                 listFiles(files, number, currentSelect);
                 int copyKey = getchar();
-            
+
                 if(copyKey == 'q' || copyKey == 'Q'){
                     copyMode = false;
                 }
-            
+
                 if(copyKey == 'y' || copyKey == 'Y'){
                     char destinationPath[PATH_MAX];
 
@@ -432,12 +464,12 @@ int main() {
 
                     if(S_ISDIR(files[currentSelect].type)){
                         printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
-                    } 
+                    }
                     else if(S_ISREG(files[currentSelect].type)){
                         printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
                     }
                 }
-            
+
                 if(copyKey == '\033'){
                     char c2 = getchar();
                     char c3 = getchar();
@@ -445,7 +477,7 @@ int main() {
                         if(c3 == 'A'){
                             currentSelect == 0 ? currentSelect = number - 1 : currentSelect--;
                         }
-                    
+
                         if(c3 == 'B'){
                             currentSelect == number - 1 ? currentSelect = 0 : currentSelect++;
                         }
@@ -463,59 +495,190 @@ int main() {
                             perror("opendir");
                             exit(1);
                         }
-                    
+
                         refreshListFile(&files, &number, &capacity);
                         currentSelect = 0;
                     }
                 }
             }
-        
+
             free(copySource);
             copySource = NULL;
-        
+
             system("clear");
             printf("Annaora file manager!\n");
             listFiles(files, number, currentSelect);
             if(S_ISDIR(files[currentSelect].type)){
                 printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
-            } 
+            }
             else if(S_ISREG(files[currentSelect].type)){
                 printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
             }
         
             continue;
         }
-
+    
         if(key == 'm' || key == 'M'){
-            system("clear");
-
-            printf("MOVE MENU FOR %s\n", files[currentSelect].name);
-            printf("\n");
-
-            printf("\n");
-            printf("Press 'Q' to exit !");
-
-            while(1){
-                key = getchar();
+            char currentPath[PATH_MAX];
+                
+            if(getcwd(currentPath, sizeof(currentPath)) == NULL){
+                perror("getcwd"); exit(1);
+            }
+        
+            moveSource = malloc(strlen(currentPath) + 1 + strlen(files[currentSelect].name) + 1);
+        
+            if(moveSource == NULL){
+                perror("malloc");
+                exit(1);
+            }
+        
+            sprintf(moveSource, "%s/%s", currentPath, files[currentSelect].name);
+            moveMode = true;
+        
+            while(moveMode){
+                system("clear");
+                printf("MOVE MODE\n");
+                printf("Move: %s\n\n", moveSource);
+                printf("[Y-CONFIRM / Q-CANCEL] ");
+                listFiles(files, number, currentSelect);
             
-                if(key == 'Q' || key == 'q'){
-                    break;
+                int moveKey = getchar();
+            
+                if(moveKey == 'q' || moveKey == 'Q'){
+                    moveMode = false;
+                }
+            
+                if(moveKey == 'y' || moveKey == 'Y'){
+                    char destinationPath[PATH_MAX];
+                
+                    if(getcwd(destinationPath, sizeof(destinationPath)) == NULL){
+                        perror("getcwd");
+                        exit(1);
+                    }
+                
+                    char *sourceName = strrchr(moveSource, '/');
+                
+                    if(sourceName == NULL){
+                        printf("Invalid source path.\n");
+                        moveMode = false;
+                        continue;
+                    }
+                
+                    sourceName++;
+                    char destination[PATH_MAX];
+                    snprintf(destination, sizeof(destination), "%s/%s", destinationPath, sourceName);
+                    moveFile(moveSource, destination);
+                    moveMode = false;
+                    refreshListFile(&files, &number, &capacity);
+                    currentSelect = 0;
+                
+                    system("clear");
+                    printf("Annaora file manager!\n");
+                    listFiles(files, number, currentSelect);
+                
+                    if(S_ISDIR(files[currentSelect].type)){
+                        printf(
+                            "\n\r%03d %43s/ FOLD\n",
+                            currentSelect,
+                            files[currentSelect].name
+                        );
+                    }
+                    else if(S_ISREG(files[currentSelect].type)){
+                        printf(
+                            "\n\r%03d %44s FILE \n",
+                            currentSelect,
+                            files[currentSelect].name
+                        );
+                    }
+                }
+
+                if(moveKey == '\033'){
+                    char c2 = getchar();
+                    char c3 = getchar();
+
+                    if(c2 == '['){
+                        if(c3 == 'A'){
+                            currentSelect == 0
+                                ? currentSelect = number - 1
+                                : currentSelect--;
+                        }
+
+                        if(c3 == 'B'){
+                            currentSelect == number - 1
+                                ? currentSelect = 0
+                                : currentSelect++;
+                        }
+                    }
+                }
+
+                if(moveKey == '\n' && S_ISDIR(files[currentSelect].type)){
+                    if(chdir(files[currentSelect].name) == -1){
+                        perror("chdir");
+                    }
+                    else{
+                        closedir(dir);
+                        dir = opendir(".");
+
+                        if(dir == NULL){
+                            perror("opendir");
+                            exit(1);
+                        }
+
+                        refreshListFile(&files, &number, &capacity);
+                        currentSelect = 0;
+                    }
                 }
             }
+
+            free(moveSource);
+            moveSource = NULL;
 
             system("clear");
             printf("Annaora file manager!\n");
             listFiles(files, number, currentSelect);
+
             if(S_ISDIR(files[currentSelect].type)){
-                printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
-            } 
-            else if(S_ISREG(files[currentSelect].type)){
-                printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
+                printf(
+                    "\n\r%03d %43s/ FOLD\n",
+                    currentSelect,
+                    files[currentSelect].name
+                );
             }
+            else if(S_ISREG(files[currentSelect].type)){
+                printf(
+                    "\n\r%03d %44s FILE \n",
+                    currentSelect,
+                    files[currentSelect].name
+                );
+            }
+
+            continue;
         }
 
         if(key == 'd' || key == 'D'){
-            // WILL JUST DEL WITHOUT CONF
+
+
+
+            system("clear");
+            printf("Annaora file manager!\n");
+            listFiles(files, number, currentSelect);
+
+            if(S_ISDIR(files[currentSelect].type)){
+                printf(
+                    "\n\r%03d %43s/ FOLD\n",
+                    currentSelect,
+                    files[currentSelect].name
+                );
+            }
+            else if(S_ISREG(files[currentSelect].type)){
+                printf(
+                    "\n\r%03d %44s FILE \n",
+                    currentSelect,
+                    files[currentSelect].name
+                );
+            }
+
+            continue;
         }
 
         if(key == 'r' || key == 'R'){
@@ -529,7 +692,7 @@ int main() {
 
             while(1){
                 key = getchar();
-            
+
                 if(key == 'Q' || key == 'q'){
                     break;
                 }
@@ -540,7 +703,7 @@ int main() {
             listFiles(files, number, currentSelect);
             if(S_ISDIR(files[currentSelect].type)){
                 printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
-            } 
+            }
             else if(S_ISREG(files[currentSelect].type)){
                 printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
             }
@@ -557,7 +720,7 @@ int main() {
 
             while(1){
                 key = getchar();
-            
+
                 if(key == 'Q' || key == 'q'){
                     break;
                 }
@@ -568,7 +731,7 @@ int main() {
             listFiles(files, number, currentSelect);
             if(S_ISDIR(files[currentSelect].type)){
                 printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
-            } 
+            }
             else if(S_ISREG(files[currentSelect].type)){
                 printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
             }
@@ -591,10 +754,10 @@ void listFiles(File *files, int number, int currentSelect){
 
         if(i == currentSelect){
             printf("\x1b[1;30;47m");
-            
+
             if(S_ISDIR(files[i].type)) {
                 printf("   -->%39s/ - FOLD\n", files[i].name);
-            } 
+            }
             else if(S_ISREG(files[i].type)) {
                 printf("   -->%40s - FILE \n", files[i].name);
             }
@@ -603,7 +766,7 @@ void listFiles(File *files, int number, int currentSelect){
         } else {
             if(S_ISDIR(files[i].type)) {
                 printf("%45s/ - FOLD\n", files[i].name);
-            } 
+            }
             else if(S_ISREG(files[i].type)) {
                 printf("%46s - FILE \n", files[i].name);
             }
@@ -874,4 +1037,19 @@ void copyFolder(const char *source, const char *destination){
         }
     }
     closedir(dir);
+}
+
+void moveFile(const char *source, const char *destination){
+
+    if(rename(source, destination) == -1){
+        perror("rename");
+    }
+}
+
+void deleteFile(const char *path){
+
+}
+
+void deleteFolder(const char *path){
+
 }

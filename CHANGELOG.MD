@@ -164,3 +164,9 @@
 ### Added
 
 - Copy mode is now implemented and should work on any file or folder !
+
+## [0.4.2.0] - 2026-09-13 / 19:30
+
+### Added
+- Move a folder anyway you like ! (without destroying your computer pls it don't take any responsibility)
+- Backspace key now sends you back to the parent folder ! (great for workflow)

@@ -73,7 +73,7 @@ Due to school starting again the developpment might be impacted and slowed so do
 
 ### Current version
 
-**v0.4.1.0 - User can see informations of a folder or a file by pressing 'o'.**
+**v0.4.2.0**
 
 ---
 
