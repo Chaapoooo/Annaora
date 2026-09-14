@@ -1,3 +1,4 @@
+#include <linux/limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -1079,12 +1080,59 @@ void moveFile(const char *source, const char *destination){
 }
 
 void deleteFile(const char *path){
-    if (remove(path) == -1){
-        perror("remove");
+
+    struct stat info;
+
+    if(lstat(path, &info) == -1){
+        perror("lstat");
         return;
+    }
+
+    if(S_ISDIR(info.st_mode)){
+        deleteFolder(path);
+    } else {
+        if(remove(path)){
+            perror("remove");
+        }
     }
 }
 
 void deleteFolder(const char *path){
+    DIR *dir = opendir(path);
+    if(dir == NULL){
+        perror("opendir");
+        return;
+    }
 
+    struct dirent *entry;
+
+    while((entry = readdir(dir)) != NULL){
+        if(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0){
+            continue;
+        }
+
+        char fullPath[PATH_MAX];
+        snprintf(fullPath, sizeof(fullPath), "%s/%s", path, entry->d_name);
+
+        struct stat info;
+
+        if(lstat(fullPath, &info) == -1){
+            perror("lstat");
+            continue;
+        }
+
+        if(S_ISDIR(info.st_mode)){
+            deleteFolder(fullPath);
+            
+        } else {
+            if(remove(fullPath) == -1){
+                perror("remove");
+            }
+        }
+    }
+
+    closedir(dir);
+    if(rmdir(path) == -1){
+        perror("rmdir");
+    }
 }

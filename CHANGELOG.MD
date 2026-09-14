@@ -193,4 +193,9 @@
 ## [0.4.3.3] - 2026-09-14 / 15:53
 
 ### Fixed
-- (Changelog.md)[CHANGELOG.MD] fix..
+- CHANGELOG.md fix..
+
+## [0.4.3.4] - 2026-09-14 / 16:20
+
+### Added
+- Yay deleteMode now deletes folder ! Works real nice and smooth ! (using recursion).
