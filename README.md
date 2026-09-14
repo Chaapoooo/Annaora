@@ -73,7 +73,7 @@ Due to school starting again the developpment might be impacted and slowed so do
 
 ### Current version
 
-**v0.4.4.0 - Make sure to always get the latest version !**
+**v0.4.5.0 - Make sure to always get the latest version !**
 
 ---
 
@@ -126,7 +126,7 @@ SINCE v0.4.0:
 - `m` key to open the move menu -> When **INSIDE** the chosen folder to move the file/folder to, press `y` to confirm.
 - `d` key to delete the selected folder/file.
 - `r` key to open the rename menu.
-- `t` key to open the mkdir / touch menu (will be created inside the active folder). **(waiting for implementation)**
+- `t` key to open the mkdir / touch menu (will be created inside the active folder).
 
 ---
 

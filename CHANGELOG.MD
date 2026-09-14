@@ -204,3 +204,8 @@
 
 ### Added
 - Amazing ! I can now rename any folder or file by pressing 'r' !
+
+## [0.4.5.0] - 2026-09-14 / 21:30
+
+### Added
+- `t` key now lets you create files & folders !

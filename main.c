@@ -749,7 +749,7 @@ int main() {
 
             if(!validName(newName)){
                 printf("Invalid Name: '/' or '\\0' are not allowed.\n");
-                getchar();
+                printf("Press any arrow key to exit.\n");
                 continue;
             }
 
@@ -765,7 +765,7 @@ int main() {
 
             if(access(destination, F_OK) == 0){
                 printf("\nA file or folder with this name already exists.\n"); 
-                getchar(); 
+                printf("Press any arrow key to exit.\n");
                 continue;
             }
 
@@ -802,29 +802,174 @@ int main() {
         if(key == 't' || key == 'T'){
             system("clear");
 
-            printf("MAKEDIR / MAKEFILE MENU%s\n", files[currentSelect].name);
-            printf("\n");
+            printf("MKDIR / TOUCH MENU\n\n");
+            printf("F - File\n");
+            printf("D - Directory\n");
+            printf("Q - Cancel\n");
 
-            printf("\n");
-            printf("Press 'Q' to exit !");
+            printf("Choose: ");
+            fflush(stdout);
 
-            while(1){
-                key = getchar();
+            char type;
+            type = getchar();
 
-                if(key == 'Q' || key == 'q'){
-                    break;
+            if(type == 'q' || type == 'Q'){
+                refreshListFile(&files, &number, &capacity);
+                system("clear");
+                printf("Annaora file manager!\n");
+                listFiles(files, number, currentSelect);
+
+                if(S_ISDIR(files[currentSelect].type)){
+                    printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
+                }
+                else if(S_ISREG(files[currentSelect].type)){
+                    printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
+                }
+                continue;
+            }
+            
+            if(type == '\n'){
+                refreshListFile(&files, &number, &capacity);
+                system("clear");
+                printf("Invalid choice.\n");
+                printf("Annaora file manager!\n");
+                listFiles(files, number, currentSelect);
+
+                if(S_ISDIR(files[currentSelect].type)){
+                    printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
+                }
+                else if(S_ISREG(files[currentSelect].type)){
+                    printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
+                }
+                continue;
+            }
+
+            if(type != 'f' && type != 'F' && type != 'd' && type != 'D'){ 
+                refreshListFile(&files, &number, &capacity);
+                system("clear");
+                printf("Invalid choice.\n");
+                printf("Annaora file manager!\n");
+                listFiles(files, number, currentSelect);
+
+                if(S_ISDIR(files[currentSelect].type)){
+                    printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
+                }
+                else if(S_ISREG(files[currentSelect].type)){
+                    printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
+                }
+                continue;
+            }
+
+            tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+
+            char newName[CHAR_MAX];
+            printf("\nName: ");
+            fflush(stdout);
+
+
+            if(fgets(newName, sizeof(newName), stdin) == NULL){
+                tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+                continue;
+            }
+
+            tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+            newName[strcspn(newName, "\n")] = '\0';
+
+            if(newName[0] == '\0'){
+                system("clear");
+                printf("A file or folder name can't be empty !\n");
+                printf("Annaora file manager!\n");
+                listFiles(files, number, currentSelect);
+
+                if(S_ISDIR(files[currentSelect].type)){
+                    printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
+                }
+                else if(S_ISREG(files[currentSelect].type)){
+                    printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
+                }
+                continue;
+            }
+
+            if(!validName(newName)){
+                refreshListFile(&files, &number, &capacity);
+                system("clear");
+                printf("Invalid Name: '/' or '\\0' are not allowed.");
+                printf("Annaora file manager!\n");
+                listFiles(files, number, currentSelect);
+                
+                if(S_ISDIR(files[currentSelect].type)){
+                    printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
+                }
+                else if(S_ISREG(files[currentSelect].type)){
+                    printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
+                }
+                continue;
+            }
+
+            char currentPath[PATH_MAX];
+
+            if(getcwd(currentPath, sizeof(currentPath)) == NULL){
+                perror("getcwd");
+                continue;
+            }
+
+            char newPath[PATH_MAX];
+            snprintf(newPath, sizeof(newPath), "%s/%s", currentPath, newName);
+
+            if(access(newPath, F_OK) == 0){
+                refreshListFile(&files, &number, &capacity);
+                system("clear");
+                printf("A file or folder with this name already exists !\n");
+                printf("Annaora file manager!\n");
+                listFiles(files, number, currentSelect);
+
+                if(S_ISDIR(files[currentSelect].type)){
+                    printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
+                }
+                else if(S_ISREG(files[currentSelect].type)){
+                    printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
+                }
+                continue;
+            }
+
+            if(type == 'd' || type == 'D'){
+                if(mkdir(newPath, 0755) == -1){
+                    perror("mkdir");
+                    continue;
+                }
+
+                printf("\nDirectory successfully created !\n");
+            } else {
+                int fd = open(newPath, O_WRONLY | O_CREAT | O_EXCL, 0644);
+                if(fd == -1){
+                    perror("touch");
+                    continue;
+                }
+
+                close(fd);
+                printf("\nFile successfully created !\n");
+            }
+
+            refreshListFile(&files, &number, &capacity);
+
+            for(int i = 0; i < number; i++){
+                if(strcmp(files[i].name, newName) == 0){ 
+                    currentSelect = i; 
+                    break; 
                 }
             }
 
             system("clear");
             printf("Annaora file manager!\n");
             listFiles(files, number, currentSelect);
+
             if(S_ISDIR(files[currentSelect].type)){
                 printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
             }
             else if(S_ISREG(files[currentSelect].type)){
                 printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
             }
+
         }
     }
 
