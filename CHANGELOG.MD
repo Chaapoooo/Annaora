@@ -117,13 +117,13 @@
 
 ## [0.3.2.3] - 2026-09-04 / 23:35
 
-### Fix
+### Fix
 
 * Now the size of a folder is the real size of whats inside of it !
 
-## [0.3.2.4] - 2026-09-04 / 23:38
+## [0.3.2.4] - 2026-09-04 / 23:38
 
-### Fix
+### Fix
 
 * Uhm, needed to fix the readme..
 
@@ -133,13 +133,13 @@
 
 * Now folder size is displayed in B, KiB, MiB, GiB or TiB depending on the size of the folder !
 
-## [0.3.2.6] - 2026-09-04 / 23:54
+## [0.3.2.6] - 2026-09-04 / 23:54
 
-### Fix
+### Fix
 
 * Function refreshListFile did not update modified, owner and symlink correctly, fixed !
 
-## [0.4.0.0] - 2026-09-05 / 13:55
+## [0.4.0.0] - 2026-09-05 / 13:55
 
 ### Added
 
@@ -153,7 +153,7 @@
 
 - Return now allows navigation to the parent folder, so by pressing `RETURN` key you will go back in the parent folder.
 
-### Changed
+### Changed
 
 - Folder names have now a `/` at the end (looks nicer than nothing).
 - Selected files/folder now have a `--->` before them.
@@ -176,16 +176,16 @@
 ### Added 
 - deleteMode for a file (works only on file and mostly broken for now).
 
-## [0.4.3.1] - 2026-09-14 / 15:30
+## [0.4.3.1] - 2026-09-14 / 15:30
 
-### Workflow
+### Workflow
 - Added `suppr` / `del` key to act as the `d` key.
 - Added `Enter` / `\n` key to act as the confirmation button (y) for copy, move, delete (and will be), rename, makedir/makefile.
 
-### Fixed
+### Fixed
 - Now when deleting the file before the last one it won't color everything in white anymore !
 
-## [0.4.3.2] - 2026-09-14 / 15:45
+## [0.4.3.2] - 2026-09-14 / 15:45
 
-### Fixed
+### Fixed
 - `Enter` key won't work as a confirmation button because it corrupted files.
