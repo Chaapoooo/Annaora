@@ -187,41 +187,6 @@ int main() {
         char key = getchar();
         usleep(1000000/60);
 
-        if(copyMode){
-            if(key == 'q' || key == 'Q'){
-                copyMode = false;
-
-                free(copySource);
-                copySource = NULL;
-
-                system("clear");
-                printf("Annaora file manager!\n");
-                listFiles(files, number, currentSelect);
-
-                continue;
-            }
-
-            if(key == 'y' || key == 'Y'){
-                system("clear");
-
-                printf("COPY DESTINATION CONFIRMED\n");
-                printf("Source: %s\n", copySource);
-                printf("Destination: %s\n", files[currentSelect].name);
-
-                getchar();
-                copyMode = false;
-
-                free(copySource);
-                copySource = NULL;
-
-                system("clear");
-                printf("Annaora file manager!\n");
-                listFiles(files, number, currentSelect);
-
-                continue;
-            }
-        }
-
         if(key == '\033') {
             char c2 = getchar();
             char c3 = getchar();
@@ -430,7 +395,7 @@ int main() {
                 system("clear");
                 printf("COPY MODE\n");
                 printf("Copy: %s\n\n", copySource);
-                printf("[Y-CONFIRM / Q-CANCEL] (y by default\n");
+                printf("[Y-CONFIRM / Q-CANCEL]\n");
                 listFiles(files, number, currentSelect);
                 int copyKey = getchar();
 
@@ -438,7 +403,7 @@ int main() {
                     copyMode = false;
                 }
 
-                if(copyKey == 'y' || copyKey == 'Y' || copyKey == '\n'){
+                if(copyKey == 'y' || copyKey == 'Y'){
                     char destinationPath[PATH_MAX];
 
                     if(getcwd(destinationPath, sizeof(destinationPath)) == NULL){
@@ -554,7 +519,7 @@ int main() {
                 system("clear");
                 printf("MOVE MODE\n");
                 printf("Move: %s\n\n", moveSource);
-                printf("[Y-CONFIRM / Q-CANCEL] (y by default)");
+                printf("[Y-CONFIRM / Q-CANCEL]");
                 listFiles(files, number, currentSelect);
             
                 int moveKey = getchar();
@@ -563,7 +528,7 @@ int main() {
                     moveMode = false;
                 }
             
-                if(moveKey == 'y' || moveKey == 'Y' || moveKey == '\n'){
+                if(moveKey == 'y' || moveKey == 'Y'){
                     char destinationPath[PATH_MAX];
                 
                     if(getcwd(destinationPath, sizeof(destinationPath)) == NULL){

@@ -73,7 +73,7 @@ Due to school starting again the developpment might be impacted and slowed so do
 
 ### Current version
 
-**v0.4.3.1**
+**v0.4.3.2 - Make sure to always get the latest version !**
 
 ---
 
