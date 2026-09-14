@@ -189,3 +189,8 @@
 
 ### Fixed
 - `Enter` key won't work as a confirmation button because it corrupted files.
+
+## [0.4.3.2] - 2026-09-14 / 15:53
+
+### Fixed
+- (Changelog.md)[CHANGELOG.MD] fix..
