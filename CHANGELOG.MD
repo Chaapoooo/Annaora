@@ -176,7 +176,7 @@
 ### Added 
 - deleteMode for a file (works only on file and mostly broken for now).
 
-## [0.4.3.1] - 2026-09-14 / 14:30
+## [0.4.3.1] - 2026-09-14 / 15:30
 
 ### Workflow
 - Added `suppr` / `del` key to act as the `d` key.
