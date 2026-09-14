@@ -209,3 +209,9 @@
 
 ### Added
 - `t` key now lets you create files & folders !
+
+## [0.4.5.1] - 2026-09-14 / 22:05
+
+### Changes
+- Made a more optimised version of the `getFolderSize` function.
+- Added informations in the informations tab, numbers of folders and files inside a folder.

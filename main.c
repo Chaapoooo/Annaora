@@ -16,6 +16,7 @@
 #include <math.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <fcntl.h>
 
 #define BUFFER_SIZE 30
 
@@ -35,7 +36,7 @@ void refreshListFile(File **files, int *number, int *capacity);
 void printPermissions(mode_t mode);
 void printDate(time_t timestamp);
 void printOwner(uid_t uid);
-off_t getFolderSize(const char *path, dev_t filesystem);
+off_t getFolderSize(const char *path, dev_t filesystem, unsigned long *fileCount, unsigned long *dirCount);
 dev_t getFilesystemDevice(const char *path);
 void convertSize(off_t size);
 
@@ -330,15 +331,19 @@ int main() {
             printf("Informations for FOLDER %s\n", files[currentSelect].name);
             printf("\n");
 
+            unsigned long fileCount = 0;
+            unsigned long dirCount = 0;
+
             printf("Size: ");
             if (S_ISDIR(files[currentSelect].type)) {
-                off_t folderSize = getFolderSize(files[currentSelect].name, getFilesystemDevice(files[currentSelect].name));
+                off_t folderSize = getFolderSize(files[currentSelect].name, getFilesystemDevice(files[currentSelect].name), &fileCount, &dirCount);
                 convertSize(folderSize);
             } else {
                 convertSize(files[currentSelect].size);
             }
 
             printf("\n");
+            printf("Contains: %lu file(s), %lu folder(s)\n", fileCount, dirCount);
 
             printf("Permissions: ");
             printPermissions(files[currentSelect].type);
@@ -522,7 +527,7 @@ int main() {
                 system("clear");
                 printf("MOVE MODE\n");
                 printf("Move: %s\n\n", moveSource);
-                printf("[Y-CONFIRM / Q-CANCEL]");
+                printf("[Y-CONFIRM / Q-CANCEL]\n");
                 listFiles(files, number, currentSelect);
             
                 int moveKey = getchar();
@@ -538,8 +543,9 @@ int main() {
                         perror("getcwd");
                         exit(1);
                     }
-                
+
                     char *sourceName = strrchr(moveSource, '/');
+                    printf("%c", *sourceName);
                 
                     if(sourceName == NULL){
                         printf("Invalid source path.\n");
@@ -1117,48 +1123,42 @@ void printOwner(uid_t uid){
     user != NULL ? printf("%s", user->pw_name) : printf("%d", uid);
 }
 
-off_t getFolderSize(const char *path, dev_t filesystem){
+off_t getFolderSize(const char *path, dev_t filesystem, unsigned long *fileCount, unsigned long *dirCount){
     DIR *dir = opendir(path);
-
     if (dir == NULL) {
-        printf("Impossible d'ouvrir : %s\n", path);
-        perror("opendir");
         return 0;
     }
 
     off_t totalSize = 0;
     struct dirent *entry;
+    int dir_fd = dirfd(dir);
 
     while ((entry = readdir(dir)) != NULL) {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
             continue;
         }
 
-        char *fullPath = malloc(strlen(path) + 1 + strlen(entry->d_name) + 1);
-        strcpy(fullPath, path);
-        strcat(fullPath, "/");
-        strcat(fullPath, entry->d_name);
-
         struct stat info;
 
-        if (lstat(fullPath, &info) == -1) {
-            free(fullPath);
+        if (fstatat(dir_fd, entry->d_name, &info, AT_SYMLINK_NOFOLLOW) == -1) {
             continue;
         }
 
         if (info.st_dev != filesystem) {
-            free(fullPath);
             continue;
         }
 
         if (S_ISREG(info.st_mode)) {
             totalSize += info.st_size;
+            if (fileCount) (*fileCount)++;
         }
         else if (S_ISDIR(info.st_mode)) {
-            totalSize += getFolderSize(fullPath, filesystem);
+            if (dirCount) (*dirCount)++;
+            char fullPath[PATH_MAX]; 
+            snprintf(fullPath, sizeof(fullPath), "%s/%s", path, entry->d_name);
+            
+            totalSize += getFolderSize(fullPath, filesystem, fileCount, dirCount);
         }
-
-        free(fullPath);
     }
 
     closedir(dir);
