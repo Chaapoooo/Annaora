@@ -170,3 +170,8 @@
 ### Added
 - Move a folder anyway you like ! (without destroying your computer pls it don't take any responsibility)
 - Backspace key now sends you back to the parent folder ! (great for workflow)
+
+## [0.4.3.0] - 2026-09-14 / 13:40
+
+### Added 
+- deleteMode for a file (works only on file and mostly broken for now).

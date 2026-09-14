@@ -43,6 +43,9 @@ void copyFolder(const char *source, const char *destination);
 
 void moveFile(const char *source, const char *destination);
 
+void deleteFile(const char *path);
+void deleteFolder(const char *path);
+
 DIR *enterFile(char basePath[], char followingPath[], char *dirPath){
     if (dirPath == NULL) {
         printf("Memory allocation failed!\n");
@@ -173,6 +176,9 @@ int main() {
 
     bool moveMode = false;
     char *moveSource = NULL;
+
+    bool deleteMode = false;
+    char *deleteSource = NULL;
 
     isFolder ? printf("\n%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name) : printf("\n%03d %44s FILE \n", currentSelect, files[currentSelect].name);
 
@@ -656,8 +662,54 @@ int main() {
         }
 
         if(key == 'd' || key == 'D'){
+            char currentPath[PATH_MAX];
+                
+            if(getcwd(currentPath, sizeof(currentPath)) == NULL){
+                perror("getcwd"); exit(1);
+            }
+        
+            deleteSource = malloc(strlen(currentPath) + 1 + strlen(files[currentSelect].name) + 1);
+        
+            if(deleteSource == NULL){
+                perror("malloc");
+                exit(1);
+            }
+        
+            sprintf(deleteSource, "%s/%s", currentPath, files[currentSelect].name);
+            deleteMode = true;
+        
+            while(deleteMode){
+                system("clear");
+                printf("DELETE MODE\n");
+                printf("Delete: %s ?\n\n", deleteSource);
+                printf("[Y-CONFIRM / Q-CANCEL] \n");
+            
+                int confirmKey = getchar();
+            
+                if(confirmKey == 'q' || confirmKey == 'Q'){
+                    deleteMode = false;
+                }
 
+                if(confirmKey == 'y' || confirmKey == 'Y'){
+                    deleteFile(deleteSource);
+                    refreshListFile(&files, &number, &capacity);
+                    deleteMode = false;
+                    system("clear");
+                    printf("Annaora file manager!\n");
+                    listFiles(files, number, currentSelect);
+                }
 
+                else if (confirmKey != 'y' || confirmKey != 'q'){
+                    system("clear");
+                }
+
+                system("clear");
+                printf("Annaora file manager!\n");
+                listFiles(files, number, currentSelect);
+            }
+
+            free(deleteSource);
+            deleteSource = NULL;
 
             system("clear");
             printf("Annaora file manager!\n");
@@ -1047,7 +1099,10 @@ void moveFile(const char *source, const char *destination){
 }
 
 void deleteFile(const char *path){
-
+    if (remove(path) == -1){
+        perror("remove");
+        return;
+    }
 }
 
 void deleteFolder(const char *path){
