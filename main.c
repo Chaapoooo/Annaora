@@ -47,6 +47,8 @@ void moveFile(const char *source, const char *destination);
 void deleteFile(const char *path);
 void deleteFolder(const char *path);
 
+bool validName(const char *name);
+
 DIR *enterFile(char basePath[], char followingPath[], char *dirPath){
     if (dirPath == NULL) {
         printf("Memory allocation failed!\n");
@@ -719,22 +721,76 @@ int main() {
             system("clear");
 
             printf("RENAME MENU FOR %s\n", files[currentSelect].name);
-            printf("\n");
+            printf("New name: ");
 
-            printf("\n");
-            printf("Press 'Q' to exit !");
+            fflush(stdout);
+            tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 
-            while(1){
-                key = getchar();
+            char newName[NAME_MAX];
 
-                if(key == 'Q' || key == 'q'){
-                    break;
+            if(fgets(newName, sizeof(newName), stdin) == NULL){
+                tcsetattr(STDIN_FILENO, TCSANOW, &newt); continue;
+            }
+
+            tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+            newName[strcspn(newName, "\n")] = '\0';
+
+            if(newName[0] == '\0'){
+                system("clear");
+                printf("Annaora file manager!\n");
+                listFiles(files, number, currentSelect);
+                if(S_ISDIR(files[currentSelect].type)){
+                    printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
+                } else {
+                    printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
+                }
+                continue;
+            }
+
+            if(!validName(newName)){
+                printf("Invalid Name: '/' or '\\0' are not allowed.\n");
+                getchar();
+                continue;
+            }
+
+            char currentPath[PATH_MAX];
+
+            if(getcwd(currentPath, sizeof(currentPath)) == NULL){
+                perror("getcwd");
+                continue;
+            }
+
+            char destination[PATH_MAX];
+            snprintf(destination, sizeof(destination), "%s/%s", currentPath, newName);
+
+            if(access(destination, F_OK) == 0){
+                printf("\nA file or folder with this name already exists.\n"); 
+                getchar(); 
+                continue;
+            }
+
+            char oldPath[PATH_MAX];
+            snprintf(oldPath, sizeof(oldPath), "%s/%s", currentPath, files[currentSelect].name);
+
+            if(rename(oldPath, destination) == -1){
+                perror("rename");
+                getchar();
+                continue;
+            }
+
+            refreshListFile(&files, &number, &capacity);
+
+            for(int i = 0; i < number; i++){
+                if(strcmp(files[i].name, newName) == 0){ 
+                    currentSelect = i; 
+                    break; 
                 }
             }
 
             system("clear");
             printf("Annaora file manager!\n");
             listFiles(files, number, currentSelect);
+
             if(S_ISDIR(files[currentSelect].type)){
                 printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
             }
@@ -1135,4 +1191,13 @@ void deleteFolder(const char *path){
     if(rmdir(path) == -1){
         perror("rmdir");
     }
+}
+
+bool validName(const char *name){
+    for(int i = 0; name[i] != '\0'; i++){
+        if(name[i] == '/'){
+            return false;
+        }
+    }
+    return true;
 }

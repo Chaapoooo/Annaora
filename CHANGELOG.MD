@@ -197,5 +197,10 @@
 
 ## [0.4.3.4] - 2026-09-14 / 16:20
 
-### Added
+### Added
 - Yay deleteMode now deletes folder ! Works real nice and smooth ! (using recursion).
+
+## [0.4.4.0] - 2026-09-14 / 16:55
+
+### Added
+- Amazing ! I can now rename any folder or file by pressing 'r' !

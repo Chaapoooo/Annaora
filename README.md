@@ -73,7 +73,7 @@ Due to school starting again the developpment might be impacted and slowed so do
 
 ### Current version
 
-**v0.4.3.4 - Make sure to always get the latest version !**
+**v0.4.4.0 - Make sure to always get the latest version !**
 
 ---
 
@@ -120,13 +120,13 @@ SINCE v0.3.0 :
 - Press 'o' to open the informations menu of a FILE, only for files as of now.
 - Press 'q' to close the informations menu.
 
-SINCE v0.4.0: **ALL OF THEM DOES NOT WORK FOR NOW, IMPLEMENTATION IS COMING..**
+SINCE v0.4.0:
 - Return now allows navigation to the parent folder, so by pressing `RETURN` key you will go back in the parent folder.
-- `c` key to open the copy menu -> When **INSIDE** the chosen folder to copy the file/folder to, press `y` to confirm. -- WORKS
+- `c` key to open the copy menu -> When **INSIDE** the chosen folder to copy the file/folder to, press `y` to confirm.
 - `m` key to open the move menu -> When **INSIDE** the chosen folder to move the file/folder to, press `y` to confirm.
-- `d` key to delete the selected folder/file (no confirmation's asked).
+- `d` key to delete the selected folder/file.
 - `r` key to open the rename menu.
-- `t` key to open the mkdir / touch menu (will be created inside the active folder).
+- `t` key to open the mkdir / touch menu (will be created inside the active folder). **(waiting for implementation)**
 
 ---
 
