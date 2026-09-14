@@ -175,3 +175,12 @@
 
 ### Added 
 - deleteMode for a file (works only on file and mostly broken for now).
+
+## [0.4.3.1] - 2026-09-14 / 14:30
+
+### Workflow
+- Added `suppr` / `del` key to act as the `d` key.
+- Added `Enter` / `\n` key to act as the confirmation button (y) for copy, move, delete (and will be), rename, makedir/makefile.
+
+### Fixed
+- Now when deleting the file before the last one it won't color everything in white anymore !

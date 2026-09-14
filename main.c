@@ -178,6 +178,7 @@ int main() {
     char *moveSource = NULL;
 
     bool deleteMode = false;
+    bool deleteKey = false;
     char *deleteSource = NULL;
 
     isFolder ? printf("\n%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name) : printf("\n%03d %44s FILE \n", currentSelect, files[currentSelect].name);
@@ -241,6 +242,14 @@ int main() {
                     printf("Annaora file manager!\n");
                     listFiles(files, number, currentSelect);
                     printf("\n\r%03d %44s FILE\n", currentSelect, files[currentSelect].name);
+                }
+            }
+
+            if(c2 == '[' && c3 == '3'){
+                char c4 = getchar();
+
+                if(c4 == '~'){
+                    deleteKey = true;
                 }
             }
         }
@@ -421,7 +430,7 @@ int main() {
                 system("clear");
                 printf("COPY MODE\n");
                 printf("Copy: %s\n\n", copySource);
-                printf("[Y-CONFIRM / Q-CANCEL] \n");
+                printf("[Y-CONFIRM / Q-CANCEL] (y by default\n");
                 listFiles(files, number, currentSelect);
                 int copyKey = getchar();
 
@@ -429,7 +438,7 @@ int main() {
                     copyMode = false;
                 }
 
-                if(copyKey == 'y' || copyKey == 'Y'){
+                if(copyKey == 'y' || copyKey == 'Y' || copyKey == '\n'){
                     char destinationPath[PATH_MAX];
 
                     if(getcwd(destinationPath, sizeof(destinationPath)) == NULL){
@@ -545,7 +554,7 @@ int main() {
                 system("clear");
                 printf("MOVE MODE\n");
                 printf("Move: %s\n\n", moveSource);
-                printf("[Y-CONFIRM / Q-CANCEL] ");
+                printf("[Y-CONFIRM / Q-CANCEL] (y by default)");
                 listFiles(files, number, currentSelect);
             
                 int moveKey = getchar();
@@ -554,7 +563,7 @@ int main() {
                     moveMode = false;
                 }
             
-                if(moveKey == 'y' || moveKey == 'Y'){
+                if(moveKey == 'y' || moveKey == 'Y' || moveKey == '\n'){
                     char destinationPath[PATH_MAX];
                 
                     if(getcwd(destinationPath, sizeof(destinationPath)) == NULL){
@@ -661,7 +670,7 @@ int main() {
             continue;
         }
 
-        if(key == 'd' || key == 'D'){
+        if(key == 'd' || key == 'D' || deleteKey){
             char currentPath[PATH_MAX];
                 
             if(getcwd(currentPath, sizeof(currentPath)) == NULL){
@@ -682,30 +691,43 @@ int main() {
                 system("clear");
                 printf("DELETE MODE\n");
                 printf("Delete: %s ?\n\n", deleteSource);
-                printf("[Y-CONFIRM / Q-CANCEL] \n");
+                printf("[Y-CONFIRM / Q-CANCEL] (y by default)\n");
             
                 int confirmKey = getchar();
             
                 if(confirmKey == 'q' || confirmKey == 'Q'){
+                    deleteKey = false;
                     deleteMode = false;
                 }
 
-                if(confirmKey == 'y' || confirmKey == 'Y'){
+                if(confirmKey == 'y' || confirmKey == 'Y' || confirmKey == '\n'){
+                    char *selectedName = NULL;
+                    if(number > 0 && currentSelect < number){
+                        selectedName = strdup(files[currentSelect].name);
+                    }
+
                     deleteFile(deleteSource);
                     refreshListFile(&files, &number, &capacity);
+                    if (selectedName != NULL) {
+                        for (int i = 0; i < number; i++) {
+                            if (strcmp(files[i].name, selectedName) == 0) {
+                                currentSelect = i;
+                                break;
+                            }
+                        }
+                        free(selectedName);
+                    }
+
+                    if (currentSelect >= number && number > 0) {
+                        currentSelect = number - 1;
+                    }
+                    
+                    deleteKey = false;
                     deleteMode = false;
-                    system("clear");
-                    printf("Annaora file manager!\n");
-                    listFiles(files, number, currentSelect);
                 }
-
-                else if (confirmKey != 'y' || confirmKey != 'q'){
+                else if (confirmKey != 'y' && confirmKey != 'q' && confirmKey != '\n'){
                     system("clear");
                 }
-
-                system("clear");
-                printf("Annaora file manager!\n");
-                listFiles(files, number, currentSelect);
             }
 
             free(deleteSource);
@@ -715,19 +737,13 @@ int main() {
             printf("Annaora file manager!\n");
             listFiles(files, number, currentSelect);
 
-            if(S_ISDIR(files[currentSelect].type)){
-                printf(
-                    "\n\r%03d %43s/ FOLD\n",
-                    currentSelect,
-                    files[currentSelect].name
-                );
-            }
-            else if(S_ISREG(files[currentSelect].type)){
-                printf(
-                    "\n\r%03d %44s FILE \n",
-                    currentSelect,
-                    files[currentSelect].name
-                );
+            if (number > 0) {
+                if(S_ISDIR(files[currentSelect].type)){
+                    printf("\n\r%03d %43s/ FOLD\n", currentSelect, files[currentSelect].name);
+                }
+                else if(S_ISREG(files[currentSelect].type)){
+                    printf("\n\r%03d %44s FILE \n", currentSelect, files[currentSelect].name);
+                }
             }
 
             continue;
@@ -813,7 +829,6 @@ void listFiles(File *files, int number, int currentSelect){
             else if(S_ISREG(files[i].type)) {
                 printf("   -->%40s - FILE \n", files[i].name);
             }
-
             printf("\x1b[0m");
         } else {
             if(S_ISDIR(files[i].type)) {
