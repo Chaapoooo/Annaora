@@ -29,6 +29,11 @@ typedef struct{
     bool isSymlink;
 } File;
 
+typedef struct {
+    char relPath[PATH_MAX];
+    bool isDir;
+} CopyNode;
+
 void listFiles(File *files, int number, int currentSelect);
 void getCurrentWorkingDirectory();
 void refreshListFile(File **files, int *number, int *capacity);
@@ -42,6 +47,7 @@ void convertSize(off_t size);
 
 void copyFile(const char *source, const char *destination);
 void copyFolder(const char *source, const char *destination);
+void scanFolder(const char *baseSource, const char *currentSubPath, CopyNode **nodes, int *count, int *capacity);
 
 void moveFile(const char *source, const char *destination);
 
@@ -1083,8 +1089,7 @@ void refreshListFile(File **files, int *number, int *capacity) {
     closedir(dir);
 }
 
-void printPermissions(mode_t mode)
-{
+void printPermissions(mode_t mode){
     mode & S_IRUSR ? printf("r") : printf("-");
 
     mode & S_IWUSR ? printf("w") : printf("-");
@@ -1232,49 +1237,75 @@ void copyFile(const char *source, const char *destination){
 }
 
 void copyFolder(const char *source, const char *destination){
-    DIR *dir = opendir(source);
+    int capacity = 16;
+    int count = 0;
+    CopyNode *nodes = malloc(capacity * sizeof(CopyNode));
 
-    if(dir == NULL){
-        perror("opendir");
-        return;
+    scanFolder(source, "", &nodes, &count, &capacity);
+    mkdir(destination, 0755);
+
+    for(int i=0; i<count; i++){
+        char srcPath[PATH_MAX];
+        char dstPath[PATH_MAX];
+
+        snprintf(srcPath, sizeof(srcPath), "%s/%s", source, nodes[i].relPath);
+        snprintf(dstPath, sizeof(dstPath), "%s/%s", destination, nodes[i].relPath);
+
+        if(nodes[i].isDir){
+            mkdir(dstPath, 0755);
+        } else {
+            copyFile(srcPath, dstPath);
+        }
     }
 
-    if(mkdir(destination, 0755) == -1){
-        perror("mkdir");
-        closedir(dir);
-        return;
+    free(nodes);
+}
+
+void scanFolder(const char *baseSource, const char *currentSubPath, CopyNode **nodes, int *count, int *capacity){
+    char fullPath[PATH_MAX];
+    if(strlen(currentSubPath) == 0){
+        snprintf(fullPath, sizeof(fullPath), "%s", baseSource);
+    } else {
+        snprintf(fullPath, sizeof(fullPath), "%s/%s", baseSource, currentSubPath);
     }
+
+    DIR *dir = opendir(fullPath);
+    if(!dir) return;
 
     struct dirent *entry;
-
     while((entry = readdir(dir)) != NULL){
-        if(strcmp(entry->d_name, ".") == 0 ||
-           strcmp(entry->d_name, "..") == 0){
-            continue;
+        if(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
+
+        char entryRelPath[PATH_MAX];
+        if(strlen(currentSubPath) == 0){
+            snprintf(entryRelPath, sizeof(entryRelPath), "%s", entry->d_name);
+        } else {
+            snprintf(entryRelPath, sizeof(entryRelPath), "%s/%s", currentSubPath, entry->d_name);
         }
 
-        char sourcePath[PATH_MAX];
-        char destinationPath[PATH_MAX];
-        snprintf(sourcePath,sizeof(sourcePath), "%s/%s", source, entry->d_name);
-        snprintf(destinationPath,sizeof(destinationPath), "%s/%s", destination, entry->d_name);
+        char entryFullPath[PATH_MAX];
+        snprintf(entryFullPath, sizeof(entryRelPath), "%s/%s", baseSource, entryRelPath);
+
         struct stat info;
+        if(lstat(entryFullPath, &info) == -1) continue;
 
-        if(lstat(sourcePath, &info) == -1){
-            perror("lstat");
-            continue;
+        if(*count >= *capacity){
+            *capacity *= 2;
+            *nodes = realloc(*nodes, *capacity * sizeof(CopyNode));
         }
+
+        strcpy((*nodes)[*count].relPath, entryRelPath);
+        (*nodes)[*count].isDir = S_ISDIR(info.st_mode);
+        (*count) ++;
 
         if(S_ISDIR(info.st_mode)){
-            copyFolder(sourcePath, destinationPath);
-        } else if(S_ISREG(info.st_mode)){
-            copyFile(sourcePath, destinationPath);
+            scanFolder(baseSource, entryRelPath, nodes, count, capacity);
         }
     }
     closedir(dir);
 }
 
 void moveFile(const char *source, const char *destination){
-
     if(rename(source, destination) == -1){
         perror("rename");
     }

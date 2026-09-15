@@ -205,9 +205,9 @@
 ### Added
 - Amazing ! I can now rename any folder or file by pressing 'r' !
 
-## [0.4.5.0] - 2026-09-14 / 21:30
+## [0.4.5.0] - 2026-09-14 / 21:30
 
-### Added
+### Added
 - `t` key now lets you create files & folders !
 
 ## [0.4.5.1] - 2026-09-14 / 22:05
@@ -215,3 +215,9 @@
 ### Changes
 - Made a more optimised version of the `getFolderSize` function.
 - Added informations in the informations tab, numbers of folders and files inside a folder.
+
+## [0.4.5.2] - 2026-09-15 /
+
+### Fixed
+- Fixed infinite duplication loops when copying a folder into itself or its descendants.
+  - Refactored `copyFolder()` to pre-scan the directory structure into a snapshot before writing files to disk.
